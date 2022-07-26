@@ -1,16 +1,14 @@
-import { useState } from "react";
+import React from "react";
+import { AppComponent } from "./components/app/AppComponent";
 
-function App() {
-  const [state, setState] = useState(0);
+const App: React.FC = () => {
+  const app = { loading: false }; // FIXME
+
   return (
     <div>
-      <div>Test: {state}</div>
-      <div>
-        <button onClick={() => setState((prev) => prev + 1)}>plus</button>
-        <button onClick={() => setState((prev) => prev - 1)}>minus</button>
-      </div>
+      <AppComponent loading={app.loading} />
     </div>
   );
-}
+};
 
 export default App;
