@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { AccountPage } from "../pages/AccountPage";
 import { DecksPage } from "../pages/DecksPage";
 import { DecksSettingsPage } from "../pages/DecksSettingsPage";
@@ -28,51 +27,51 @@ export enum RoutesEnum {
 
 interface IRoute {
   path: string;
-  element: ReactNode;
+  Component: React.FC;
 }
 
 export const publicRoutes: IRoute[] = [
   {
     path: RoutesEnum.SINGIN,
-    element: <SingInPage />,
+    Component: SingInPage,
   },
   {
     path: RoutesEnum.SINGUP,
-    element: <SingUpPage />,
+    Component: SingUpPage,
   },
 ];
 
 export const privateRoutes: IRoute[] = [
   {
     path: RoutesEnum.HOME,
-    element: <HomePage />,
+    Component: HomePage,
   },
   {
     path: RoutesEnum.ACCOUNT,
-    element: <AccountPage />,
+    Component: AccountPage,
   },
   {
     path: RoutesEnum.FLASHCARDS,
-    element: <FlashcardsPage />,
+    Component: FlashcardsPage,
   },
   {
     path: RoutesEnum.FLASHCARDS_SETTINGS,
-    element: <FlashcardsSettingsPage />,
+    Component: FlashcardsSettingsPage,
   },
   {
     path: RoutesEnum.DECKS,
-    element: <DecksPage />,
+    Component: DecksPage,
   },
   {
     path: RoutesEnum.DECKS_SETTINGS,
-    element: <DecksSettingsPage />,
+    Component: DecksSettingsPage,
   },
   {
     path: RoutesEnum.QUIZ,
-    element: <QuizPage />,
+    Component: QuizPage,
   },
   {
     path: RoutesEnum.QUIZ_SETTINGS,
-    element: <QuizSettingsPage />,
+    Component: QuizSettingsPage,
   },
 ];

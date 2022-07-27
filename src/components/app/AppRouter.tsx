@@ -1,7 +1,6 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { privateRoutes, publicRoutes, RoutesEnum } from "../../routes";
-import { RedirectHandler } from "../misc/RedirectHandler";
 
 export const AppRouter: React.FC = () => {
   const user = { isAuth: true }; // FIXME
@@ -9,10 +8,9 @@ export const AppRouter: React.FC = () => {
 
   return (
     <>
-      {user.isAuth && <AuthComponents />}
       <Routes>
-        {routes.map(({ path, element }) => (
-          <Route key={path} path={path} element={element} />
+        {routes.map(({ path, Component }) => (
+          <Route key={path} path={path} element={<Component />} />
         ))}
         <Route
           path="*"
@@ -21,15 +19,6 @@ export const AppRouter: React.FC = () => {
           }
         />
       </Routes>
-    </>
-  );
-};
-
-const AuthComponents: React.FC = () => {
-  return (
-    <>
-      {/* <ReduxInit /> FIXME */}
-      <RedirectHandler />
     </>
   );
 };
