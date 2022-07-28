@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { MainContainer } from "../components/misc/MainContainer";
+import { useActions } from "../hooks/useActions";
+import { useAppSelector } from "../hooks/useAppSelector";
 import { RoutesEnum } from "../routes";
 
-export const SingInPage: React.FC = () => {
+export const SignInPage: React.FC = () => {
+  const user = useAppSelector((state) => state.user);
+  const { userSignIn } = useActions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ email, password });
+    userSignIn({ email, password });
   };
 
   return (
@@ -39,12 +43,13 @@ export const SingInPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          {user.error && <div>Error: {user.error}</div>}
           <div>
             <button type="submit">Sign In</button>
           </div>
         </form>
         <div>
-          <Link to={RoutesEnum.SINGUP}>
+          <Link to={RoutesEnum.SIGNUP}>
             <p>Don't have an account? Sign up</p>
           </Link>
         </div>

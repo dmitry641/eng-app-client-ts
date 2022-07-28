@@ -2,30 +2,19 @@ import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { AppRouter } from "./components/app/AppRouter";
 import { Loader } from "./components/misc/Loader";
-import { useActions } from "./hooks/useActions";
+import { useAppDispatch } from "./hooks/useAppDispatch";
 import { useAppSelector } from "./hooks/useAppSelector";
-
-let counter = 0;
+import { appInit } from "./redux/actions/app-actions";
 
 const App: React.FC = () => {
   const app = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
 
-  // const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     dispatch(appActions.appSetLoading(false));
-  //   }, 3000);
-  // }, [dispatch]);
-
-  const { appSetLoading } = useActions();
   useEffect(() => {
-    setTimeout(() => {
-      appSetLoading(false);
-    }, 3000);
-  }, [appSetLoading]);
+    dispatch(appInit());
+  }, [dispatch]);
 
-  console.log(counter++);
-
+  if (app.loading === null) return null; // logo
   if (app.loading) return <Loader />;
   if (app.redirect) return <Navigate to={app.redirect} />;
   return <AppRouter />;

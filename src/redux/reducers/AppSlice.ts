@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RoutesEnum } from "../../routes";
 
 interface AppState {
-  loading: boolean;
+  loading: null | boolean;
   redirect: null | RoutesEnum;
 }
 
 const initialState: AppState = {
-  loading: true,
+  loading: null,
   redirect: null,
 };
 
@@ -15,12 +15,13 @@ const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    appSetLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    appSetRedirect(state, action: PayloadAction<AppState["redirect"]>) {
+    setRedirect(state, action: PayloadAction<AppState["redirect"]>) {
       state.redirect = action.payload;
     },
+    reset: () => initialState,
   },
 });
 

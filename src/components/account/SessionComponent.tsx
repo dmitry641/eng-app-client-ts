@@ -1,36 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
+import { useSessions } from "../../hooks/useSessions";
 import { SessionsList } from "./SessionsList";
 
 export const SessionComponent: React.FC = () => {
-  const [showList, setShowList] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [sessions] = useState([]);
-  const [disabled, setDisabled] = useState(false);
-
-  // FIXME custom hook?
-  const getSessions = async () => {
-    try {
-      setDisabled(true);
-      setShowList(true);
-      setLoading(true);
-      // const res = await UserService.sessions();
-      // setSessions(res.data);
-      // setLoading(false);
-      // await sleep(SLEEP_TIMEOUTS.short);
-      // setDisabled(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const resetSessionsHandler = async () => {
-    try {
-      // await UserService.sessionsReset();
-      // dispatch(userStateReset());
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { disabled, getSessions, loading, resetSessions, sessions, showList } =
+    useSessions();
 
   return (
     <div>
@@ -41,7 +15,7 @@ export const SessionComponent: React.FC = () => {
             Get sessions
           </button>
         ) : (
-          <button disabled={disabled} onClick={resetSessionsHandler}>
+          <button disabled={disabled} onClick={resetSessions}>
             Reset sessions
           </button>
         )}

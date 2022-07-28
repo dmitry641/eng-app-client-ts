@@ -6,12 +6,12 @@ import { FlashcardsSettingsPage } from "../pages/FlashcardsSettingsPage";
 import { HomePage } from "../pages/HomePage";
 import { QuizPage } from "../pages/QuizPage";
 import { QuizSettingsPage } from "../pages/QuizSettingsPage";
-import { SingInPage } from "../pages/SingInPage";
-import { SingUpPage } from "../pages/SingUpPage";
+import { SignInPage } from "../pages/SignInPage";
+import { SignUpPage } from "../pages/SignUpPage";
 
 export enum RoutesEnum {
-  SINGIN = "/singin",
-  SINGUP = "/singup",
+  SIGNIN = "/signin",
+  SIGNUP = "/signup",
   HOME = "/",
   ACCOUNT = "/account",
 
@@ -32,12 +32,12 @@ interface IRoute {
 
 export const publicRoutes: IRoute[] = [
   {
-    path: RoutesEnum.SINGIN,
-    Component: SingInPage,
+    path: RoutesEnum.SIGNIN,
+    Component: SignInPage,
   },
   {
-    path: RoutesEnum.SINGUP,
-    Component: SingUpPage,
+    path: RoutesEnum.SIGNUP,
+    Component: SignUpPage,
   },
 ];
 
