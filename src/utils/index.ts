@@ -11,7 +11,9 @@ export enum HeaderTitleEnum {
   quizSettings = "Quiz settings",
 }
 
-export type AxiosApiError = AxiosError<{ message?: string }>;
+type ApiError = { message?: string; status?: number };
+export type AxiosApiError = AxiosError<ApiError>;
+export type BaseQueryError = { data?: ApiError };
 
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
