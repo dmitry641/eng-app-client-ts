@@ -1,4 +1,5 @@
 import { RoutesEnum } from "../../routes";
+import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 import { LS_KEY } from "../../utils";
 import { appActions } from "../reducers/AppSlice";
@@ -31,6 +32,7 @@ export function appResetAll() {
     dispatch(userActions.reset());
     dispatch(appActions.reset());
     dispatch(decksAPI.internalActions.resetApiState());
+    dispatch(cardsAPI.internalActions.resetApiState());
     dispatch(appInit()); // ???
   };
 }

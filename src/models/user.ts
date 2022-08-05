@@ -5,7 +5,7 @@ export interface IUser {
 }
 
 export interface IUserSettings {
-  darkTheme: boolean;
+  darkMode: boolean;
 }
 
 export type UserResponseType = {
