@@ -1,5 +1,6 @@
 import React from "react";
 import { IDeck } from "../../models/deck";
+import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 
 interface DeckProps {
@@ -7,10 +8,14 @@ interface DeckProps {
 }
 
 export const Deck: React.FC<DeckProps> = ({ deck }) => {
+  const { refetch: refetchCards } = cardsAPI.useGetCardsQuery();
   const [add, { isLoading }] = decksAPI.useAddPDtoUDMutation();
 
-  const addHandler = () => {
-    add(deck.id);
+  const addHandler = async () => {
+    try {
+      await add(deck.id).unwrap();
+      refetchCards();
+    } catch (error) {}
   };
 
   return (

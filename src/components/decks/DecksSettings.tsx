@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { IDecksSettings, SyncData, SyncTypeEnum } from "../../models/deck";
+import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 import { Loader } from "../misc/Loader";
 
 export const DeckSettings: React.FC = () => {
-  const { data, isLoading } = decksAPI.useGetSettingsQuery();
+  const { data: settings, isLoading } = decksAPI.useGetSettingsQuery();
 
   if (isLoading) return <Loader />;
-  if (!data) return null;
-  if (!data.dynamicSyncType) return <FirstState settings={data} />;
-  return <ThirdState settings={data} />;
+  if (!settings) return null;
+  if (!settings.dynamicSyncType) return <FirstState settings={settings} />;
+  return <ThirdState settings={settings} />;
 };
 
 interface SettingsProps {
@@ -17,8 +18,10 @@ interface SettingsProps {
 }
 
 const FirstState: React.FC<SettingsProps> = ({ settings }) => {
+  const { isFetching } = decksAPI.useGetSettingsQuery();
   const [create, { isLoading }] = decksAPI.useCreateDynamicMutation();
   const [second, setSecond] = useState(false);
+  const btnLoading = isLoading;
 
   const stateToTrue = () => setSecond(true);
   const stateToFalse = () => setSecond(false);
@@ -32,11 +35,12 @@ const FirstState: React.FC<SettingsProps> = ({ settings }) => {
     } catch (error) {}
   };
 
+  if (isFetching) return <Loader />;
   if (second) return <SecondState backToPrevState={stateToFalse} />;
   return (
     <>
       <p>Not synced with the dynamic deck yet.</p>
-      <button disabled={isLoading} onClick={createHandler}>
+      <button disabled={btnLoading} onClick={createHandler}>
         {settings.dynamicCreated ? "Choose sync type" : "Create dynamic deck"}
       </button>
     </>
@@ -116,24 +120,25 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
 };
 
 const ThirdState: React.FC<SettingsProps> = ({ settings }) => {
-  const [update, { isLoading: asLoading }] =
-    decksAPI.useUpdateAutoSyncMutation();
-  const [sync, { isLoading: scLoading }] = decksAPI.useSyncMutation();
+  const { refetch: refetchCards } = cardsAPI.useGetCardsQuery();
+  const { isFetching } = decksAPI.useGetSettingsQuery();
+  const [update, { isLoading: asL }] = decksAPI.useUpdateAutoSyncMutation();
+  const [sync, { isLoading: sL }] = decksAPI.useSyncMutation();
   const [second, setSecond] = useState(false);
-  const [authSync, setAuthSync] = useState(settings.dynamicAutoSync);
+  const btnLoading = isFetching || asL || sL;
 
   const stateToTrue = () => setSecond(true);
   const stateToFalse = () => setSecond(false);
 
-  const autoSyncHandler = async () => {
-    try {
-      await update(!authSync).unwrap();
-      setAuthSync((prev) => !prev);
-    } catch (error) {}
+  const autoSyncHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    update(e.target.checked);
   };
 
-  const syncNow = () => {
-    sync();
+  const syncNow = async () => {
+    try {
+      await sync().unwrap();
+      refetchCards();
+    } catch (error) {}
   };
 
   if (second) return <SecondState backToPrevState={stateToFalse} />;
@@ -143,23 +148,25 @@ const ThirdState: React.FC<SettingsProps> = ({ settings }) => {
       <p>Sync type: {settings.dynamicSyncType}</p>
       <p>Sync link: {settings.dynamicSyncLink}</p>
       <div>
-        <button onClick={stateToTrue}>Change</button>
+        <button disabled={btnLoading} onClick={stateToTrue}>
+          Change
+        </button>
       </div>
       <br />
       <div>
         <input
-          disabled={asLoading}
+          disabled={btnLoading}
           type="checkbox"
           name="autoSync"
           id="autoSync"
-          checked={authSync}
+          checked={settings.dynamicAutoSync}
           onChange={autoSyncHandler}
         />
         <label htmlFor="autoSync">Auto sync</label>
       </div>
       <br />
       <div>
-        <button onClick={syncNow} disabled={scLoading}>
+        <button onClick={syncNow} disabled={btnLoading}>
           Sync
         </button>
         {settings.dynamicSyncMessage && (

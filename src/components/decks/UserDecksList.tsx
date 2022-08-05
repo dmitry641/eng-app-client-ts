@@ -4,16 +4,16 @@ import { Loader } from "../misc/Loader";
 import { UserDeck } from "./UserDeck";
 
 export const UserDecksList: React.FC = () => {
-  const { data, isLoading } = decksAPI.useGetUserDecksQuery();
+  const { data: userDecks, isLoading } = decksAPI.useGetUserDecksQuery();
 
   if (isLoading) return <Loader />;
-  if (!data) return null;
-  if (data.length === 0) return <div>no user decks</div>;
+  if (!userDecks) return null;
+  if (userDecks.length === 0) return <div>no user decks</div>;
   return (
     <div>
       <div>User decks:</div>
       <div>
-        {data.map((userDeck) => (
+        {userDecks.map((userDeck) => (
           <UserDeck userDeck={userDeck} key={userDeck.id} />
         ))}
       </div>

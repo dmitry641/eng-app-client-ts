@@ -11,10 +11,8 @@ export const Favorite: React.FC<FavoriteProps> = ({ favorite }) => {
   const [unfavorite, { isLoading: unLoading }] = cardsAPI.useFavoriteMutation();
   const btnLoading = unLoading || isFetching;
 
-  const unfavoriteHandler = async () => {
-    try {
-      await unfavorite(favorite.id).unwrap();
-    } catch (error) {}
+  const unfavoriteHandler = () => {
+    unfavorite(favorite.id);
   };
 
   return (

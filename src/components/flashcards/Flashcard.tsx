@@ -36,15 +36,11 @@ const Card: React.FC<CardProps> = ({ flashcard, lrnTrigger, isFetching }) => {
     : flashcard.card.backPrimary;
 
   const flipHandler = switchSide;
-  const deleteHandler = async () => {
-    try {
-      await del(flashcard.id).unwrap();
-    } catch (error) {}
+  const deleteHandler = () => {
+    del(flashcard.id);
   };
-  const favoriteHandler = async () => {
-    try {
-      await fav(flashcard.id).unwrap();
-    } catch (error) {}
+  const favoriteHandler = () => {
+    fav(flashcard.id);
   };
   const learnHandler = async (status: StatusEnum) => {
     try {

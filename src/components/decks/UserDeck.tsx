@@ -1,5 +1,6 @@
 import React from "react";
 import { IUserDeck, MoveUserDeck } from "../../models/deck";
+import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 
 interface UserDeckProps {
@@ -7,6 +8,8 @@ interface UserDeckProps {
 }
 
 export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
+  const { refetch: refetchCards } = cardsAPI.useGetCardsQuery();
+  const { isFetching } = decksAPI.useGetUserDecksQuery();
   const [enable, { isLoading: enLoading }] = decksAPI.useEnableMutation();
   const [move, { isLoading: mvLoading }] = decksAPI.useMoveMutation();
   const [deleteUD, { isLoading: dlLoading }] = decksAPI.useDeleteMutation();
@@ -14,10 +17,14 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
   const [deleteDD, { isLoading: ddLoading }] =
     decksAPI.useDeleteDynamicMutation();
 
-  const loading = enLoading || mvLoading || dlLoading || tgLoading || ddLoading;
+  const btnLoading =
+    isFetching || enLoading || mvLoading || dlLoading || tgLoading || ddLoading;
 
-  const enableHandler = () => {
-    enable(userDeck.id);
+  const enableHandler = async () => {
+    try {
+      await enable(userDeck.id).unwrap();
+      refetchCards();
+    } catch (error) {}
   };
   const moveHandler = (position: MoveUserDeck["position"]) => {
     move({ userDeckId: userDeck.id, position });
@@ -50,20 +57,20 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
         {`Cards count: ${userDeck.cardsCount} | Cards learned: ${userDeck.cardsLearned}`}
       </p>
       <div>
-        <button disabled={loading} onClick={enableHandler}>
+        <button disabled={btnLoading} onClick={enableHandler}>
           {userDeck.enabled ? "Disable" : "Enable"}
         </button>
-        <button disabled={loading} onClick={() => moveHandler("up")}>
+        <button disabled={btnLoading} onClick={() => moveHandler("up")}>
           Move up
         </button>
-        <button disabled={loading} onClick={() => moveHandler("down")}>
+        <button disabled={btnLoading} onClick={() => moveHandler("down")}>
           Move down
         </button>
-        <button disabled={loading} onClick={deleteHandler}>
+        <button disabled={btnLoading} onClick={deleteHandler}>
           Delete
         </button>
         {userDeck.canPublicIt && (
-          <button disabled={loading} onClick={toggleHandler}>
+          <button disabled={btnLoading} onClick={toggleHandler}>
             {userDeck.published ? "Unpublish" : "Publish"}
           </button>
         )}

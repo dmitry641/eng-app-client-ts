@@ -12,13 +12,11 @@ export const FlashcardsSettings: React.FC = () => {
   const [update, { isLoading: utLoading }] = cardsAPI.useUpdateMutation();
   const btnLoading = isFetching || utLoading;
 
-  const changeHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-    try {
-      await update({
-        type: e.target.name as UpdateTypeEnum,
-        value: e.target.checked,
-      }).unwrap();
-    } catch (error) {}
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    update({
+      type: e.target.name as UpdateTypeEnum,
+      value: e.target.checked,
+    });
   };
 
   if (isLoading) return <Loader />;

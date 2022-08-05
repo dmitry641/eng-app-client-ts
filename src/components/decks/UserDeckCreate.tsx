@@ -1,7 +1,9 @@
 import React, { useRef } from "react";
+import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 
 export const UserDeckCreate: React.FC = () => {
+  const { refetch: refetchCards } = cardsAPI.useGetCardsQuery();
   const [create, { isLoading }] = decksAPI.useCreateMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -10,11 +12,14 @@ export const UserDeckCreate: React.FC = () => {
   };
 
   const createHandler = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event?.target?.files?.[0];
-    if (!file) throw new Error();
-    const formData = new FormData();
-    formData.append("csv", file);
-    create(formData);
+    try {
+      const file = event?.target?.files?.[0];
+      if (!file) throw new Error();
+      const formData = new FormData();
+      formData.append("csv", file);
+      await create(formData).unwrap();
+      refetchCards();
+    } catch (error) {}
   };
 
   return (
