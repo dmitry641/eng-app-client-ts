@@ -1,4 +1,4 @@
-export interface IFlashcard {
+export interface IUserCard {
   id: string;
   cardId: string;
   userDeckId: string;

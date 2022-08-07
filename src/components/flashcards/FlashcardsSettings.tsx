@@ -4,13 +4,9 @@ import { cardsAPI } from "../../service/cardsApi";
 import { Loader } from "../misc/Loader";
 
 export const FlashcardsSettings: React.FC = () => {
-  const {
-    data: settings,
-    isLoading,
-    isFetching,
-  } = cardsAPI.useGetSettingsQuery();
+  const { data: settings, isLoading } = cardsAPI.useGetSettingsQuery();
   const [update, { isLoading: utLoading }] = cardsAPI.useUpdateMutation();
-  const btnLoading = isFetching || utLoading;
+  const btnLoading = utLoading;
 
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     update({

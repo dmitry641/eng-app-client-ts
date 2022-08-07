@@ -1,34 +1,22 @@
 import React, { useRef, useState } from "react";
-import { useFlashcards } from "../../hooks/useFlashcards";
 import { useSide } from "../../hooks/useSide";
-import { IFlashcard, StatusEnum } from "../../models/flashcard";
+import { IUserCard, StatusEnum } from "../../models/flashcard";
 import { cardsAPI } from "../../service/cardsApi";
 
-export const Flashcard: React.FC = () => {
-  const { flashcard, isFetching, lrnTrigger } = useFlashcards();
-
-  if (!flashcard) return null;
-  return (
-    <Card
-      flashcard={flashcard}
-      lrnTrigger={lrnTrigger}
-      isFetching={isFetching}
-    />
-  );
-};
-
-interface CardProps {
-  flashcard: IFlashcard;
-  lrnTrigger: () => void;
+interface FlashcardProps {
+  flashcard: IUserCard;
   isFetching: boolean;
 }
 
-const Card: React.FC<CardProps> = ({ flashcard, lrnTrigger, isFetching }) => {
+export const Flashcard: React.FC<FlashcardProps> = ({
+  flashcard,
+  isFetching,
+}) => {
   const [frontSide, switchSide] = useSide();
   const [playing, setPlaying] = useState(false);
   const synthRef = useRef(window.speechSynthesis);
   const [fav, { isLoading: fL }] = cardsAPI.useFavoriteMutation();
-  const [del, { isLoading: dL }] = cardsAPI.useFavoriteMutation();
+  const [del, { isLoading: dL }] = cardsAPI.useDeleteMutation();
   const [lrn, { isLoading: lL }] = cardsAPI.useLearnMutation();
   const btnLoading = isFetching || fL || dL || lL;
   const currentCardText = frontSide
@@ -42,11 +30,8 @@ const Card: React.FC<CardProps> = ({ flashcard, lrnTrigger, isFetching }) => {
   const favoriteHandler = () => {
     fav(flashcard.id);
   };
-  const learnHandler = async (status: StatusEnum) => {
-    try {
-      await lrn({ userCardId: flashcard.id, status }).unwrap();
-      lrnTrigger();
-    } catch (error) {}
+  const learnHandler = (status: StatusEnum) => {
+    lrn({ userCardId: flashcard.id, status });
   };
   const playStopHandler = () => {
     if (playing) {
@@ -82,9 +67,9 @@ const Card: React.FC<CardProps> = ({ flashcard, lrnTrigger, isFetching }) => {
       <div>
         <button
           disabled={btnLoading}
-          onClick={() => learnHandler(StatusEnum.easy)}
+          onClick={() => learnHandler(StatusEnum.hard)}
         >
-          easy
+          hard
         </button>
         <button
           disabled={btnLoading}
@@ -94,9 +79,9 @@ const Card: React.FC<CardProps> = ({ flashcard, lrnTrigger, isFetching }) => {
         </button>
         <button
           disabled={btnLoading}
-          onClick={() => learnHandler(StatusEnum.hard)}
+          onClick={() => learnHandler(StatusEnum.easy)}
         >
-          hard
+          easy
         </button>
       </div>
     </div>

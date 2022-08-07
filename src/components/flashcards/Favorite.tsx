@@ -1,15 +1,14 @@
 import React from "react";
-import { IFlashcard } from "../../models/flashcard";
+import { IUserCard } from "../../models/flashcard";
 import { cardsAPI } from "../../service/cardsApi";
 
 interface FavoriteProps {
-  favorite: IFlashcard;
+  favorite: IUserCard;
 }
 
 export const Favorite: React.FC<FavoriteProps> = ({ favorite }) => {
-  const { isFetching } = cardsAPI.useGetFavoritesQuery();
-  const [unfavorite, { isLoading: unLoading }] = cardsAPI.useFavoriteMutation();
-  const btnLoading = unLoading || isFetching;
+  const [unfavorite, { isLoading }] = cardsAPI.useFavoriteMutation();
+  const btnLoading = isLoading;
 
   const unfavoriteHandler = () => {
     unfavorite(favorite.id);
