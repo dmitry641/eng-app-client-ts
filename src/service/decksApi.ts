@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
 import {
+  DeckSetResponse,
   IDeck,
   IDecksSettings,
   IUserDeck,
@@ -7,6 +8,7 @@ import {
   SyncData,
 } from "../models/deck";
 import { baseApi } from "./baseApi";
+import { refetchCardsAction } from "./cardsApi";
 
 export const decksAPI = createApi({
   reducerPath: "decksAPI",
@@ -17,36 +19,58 @@ export const decksAPI = createApi({
       query: () => ({ url: "/decks" }),
       providesTags: () => ["UserDeck"],
     }),
-    enable: build.mutation<IUserDeck, string>({
-      query: (userDeckId) => ({
-        url: "/decks/enable",
-        method: "POST",
-        body: { userDeckId },
-      }),
-      invalidatesTags: ["UserDeck"],
-    }),
-    move: build.mutation<IUserDeck, MoveUserDeck>({
-      query: ({ userDeckId, position }) => ({
-        url: "/decks/move",
-        method: "POST",
-        body: { userDeckId, position },
-      }),
-      invalidatesTags: ["UserDeck"],
-    }),
     create: build.mutation<IUserDeck, FormData>({
       query: (formdata) => ({
         url: "/decks",
         method: "POST",
         body: formdata,
       }),
-      invalidatesTags: ["UserDeck"],
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        const { data: userDeck } = await queryFulfilled;
+        dispatch(appendUserDeckAction(userDeck));
+        dispatch(refetchCardsAction);
+      },
     }),
-    delete: build.mutation<IUserDeck, string>({
+
+    enable: build.mutation<IUserDeck, string>({
+      query: (userDeckId) => ({
+        url: "/decks/enable",
+        method: "POST",
+        body: { userDeckId },
+      }),
+      onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
+        const { data: userDeck } = await queryFulfilled;
+        dispatch(updateUserDecksAction(userDeck));
+        dispatch(refetchCardsAction);
+      },
+    }),
+    move: build.mutation<IUserDeck[], MoveUserDeck>({
+      query: ({ userDeckId, position }) => ({
+        url: "/decks/move",
+        method: "POST",
+        body: { userDeckId, position },
+      }),
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        const { data: userDecks } = await queryFulfilled;
+        dispatch(
+          decksAPI.util.updateQueryData(
+            "getUserDecks",
+            undefined,
+            () => userDecks
+          )
+        );
+      },
+    }),
+    delete: build.mutation<boolean, string>({
       query: (userDeckId) => ({
         url: `/decks/delete/${userDeckId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["UserDeck", "Deck"],
+      invalidatesTags: ["Deck"],
+      onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
+        await queryFulfilled;
+        dispatch(filterUserDecksAction(userDeckId));
+      },
     }),
     toggleUDToPD: build.mutation<IUserDeck, string>({
       query: (userDeckId) => ({
@@ -54,20 +78,30 @@ export const decksAPI = createApi({
         method: "POST",
         body: { userDeckId },
       }),
-      invalidatesTags: ["UserDeck"],
+      onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
+        const { data: userDeck } = await queryFulfilled;
+        dispatch(updateUserDecksAction(userDeck));
+      },
     }),
+
     getDecks: build.query<IDeck[], void>({
       query: () => ({ url: "/decks/public" }),
       providesTags: () => ["Deck"],
     }),
-    addPDtoUD: build.mutation<IDeck, string>({
+    addPDtoUD: build.mutation<IUserDeck, string>({
       query: (deckId) => ({
         url: "/decks/public",
         method: "POST",
         body: { deckId },
       }),
-      invalidatesTags: ["UserDeck", "Deck"],
+      invalidatesTags: ["Deck"],
+      onQueryStarted: async (deckId, { dispatch, queryFulfilled }) => {
+        const { data: userDeck } = await queryFulfilled;
+        dispatch(appendUserDeckAction(userDeck));
+        dispatch(refetchCardsAction);
+      },
     }),
+
     getSettings: build.query<IDecksSettings, void>({
       query: () => ({ url: "/decks/settings" }),
       providesTags: () => ["Settings"],
@@ -78,7 +112,10 @@ export const decksAPI = createApi({
         method: "POST",
         body: syncData,
       }),
-      invalidatesTags: ["Settings"],
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        const { data: settings } = await queryFulfilled;
+        dispatch(updateDecksSettingsAction(settings));
+      },
     }),
     updateAutoSync: build.mutation<IDecksSettings, boolean>({
       query: (value) => ({
@@ -86,28 +123,75 @@ export const decksAPI = createApi({
         method: "POST",
         body: { value },
       }),
-      invalidatesTags: ["Settings"],
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        const { data: settings } = await queryFulfilled;
+        dispatch(updateDecksSettingsAction(settings));
+      },
     }),
-    sync: build.mutation<IUserDeck, void>({
+
+    sync: build.mutation<DeckSetResponse, void>({
       query: () => ({
         url: "/decks/dynamic/sync",
         method: "POST",
       }),
-      invalidatesTags: ["UserDeck", "Settings"],
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        const {
+          data: { settings, userDeck },
+        } = await queryFulfilled;
+        dispatch(updateUserDecksAction(userDeck));
+        dispatch(updateDecksSettingsAction(settings));
+        dispatch(refetchCardsAction);
+      },
     }),
-    createDynamic: build.mutation<IUserDeck, void>({
+    createDynamic: build.mutation<DeckSetResponse, void>({
       query: () => ({
         url: "/decks/dynamic",
         method: "POST",
       }),
-      invalidatesTags: ["UserDeck", "Settings"],
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        const {
+          data: { userDeck, settings },
+        } = await queryFulfilled;
+        dispatch(updateDecksSettingsAction(settings));
+        dispatch(appendUserDeckAction(userDeck));
+      },
     }),
-    deleteDynamic: build.mutation<IDecksSettings, void>({
+    deleteDynamic: build.mutation<IDecksSettings, string>({
       query: () => ({
         url: "/decks/dynamic/",
         method: "DELETE",
       }),
-      invalidatesTags: ["UserDeck", "Settings"],
+      onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
+        const { data: settings } = await queryFulfilled;
+        dispatch(updateDecksSettingsAction(settings));
+        dispatch(filterUserDecksAction(userDeckId));
+      },
     }),
   }),
 });
+
+export const updateUserDecksAction = (userDeck: IUserDeck) =>
+  decksAPI.util.updateQueryData("getUserDecks", undefined, (draftUserDecks) => {
+    const index = draftUserDecks.findIndex((c) => c.id === userDeck.id);
+
+    if (index !== -1) {
+      draftUserDecks[index] = userDeck;
+    }
+
+    return draftUserDecks;
+  });
+
+export const filterUserDecksAction = (userDeckId: string) =>
+  decksAPI.util.updateQueryData("getUserDecks", undefined, (draftUserDecks) => {
+    const filtered = draftUserDecks.filter((d) => d.id !== userDeckId);
+    return filtered;
+  });
+
+export const updateDecksSettingsAction = (settings: IDecksSettings) =>
+  decksAPI.util.updateQueryData("getSettings", undefined, () => settings);
+
+export const appendUserDeckAction = (userDeck: IUserDeck) =>
+  decksAPI.util.updateQueryData("getUserDecks", undefined, (draftDecks) => {
+    draftDecks.push(userDeck);
+    return draftDecks;
+  });

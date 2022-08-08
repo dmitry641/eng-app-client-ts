@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
 import { IDecksSettings, SyncData, SyncTypeEnum } from "../../models/deck";
-import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 import { Loader } from "../misc/Loader";
 
@@ -18,7 +17,6 @@ interface SettingsProps {
 }
 
 const FirstState: React.FC<SettingsProps> = ({ settings }) => {
-  const { isFetching } = decksAPI.useGetSettingsQuery();
   const [create, { isLoading }] = decksAPI.useCreateDynamicMutation();
   const [second, setSecond] = useState(false);
   const btnLoading = isLoading;
@@ -35,7 +33,6 @@ const FirstState: React.FC<SettingsProps> = ({ settings }) => {
     } catch (error) {}
   };
 
-  if (isFetching) return <Loader />;
   if (second) return <SecondState backToPrevState={stateToFalse} />;
   return (
     <>
@@ -54,6 +51,7 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
   const [update, { isLoading }] = decksAPI.useUpdateSyncDataMutation();
   const [type, setType] = useState<SyncTypeEnum>();
   const [link, setLink] = useState<string>();
+  const btnLoading = isLoading;
 
   const radioHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setType(e.target.value as SyncTypeEnum);
@@ -77,7 +75,7 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
         <div>Sync with...</div>
         <div>
           <input
-            disabled={isLoading}
+            disabled={btnLoading}
             type="radio"
             id="yandex"
             name="type"
@@ -88,7 +86,7 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
         </div>
         <div>
           <input
-            disabled={isLoading}
+            disabled={btnLoading}
             type="radio"
             id="reverso"
             name="type"
@@ -101,16 +99,16 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
         <LinkComponent
           type={type}
           onChange={changeHandler}
-          isLoading={isLoading}
+          btnLoading={btnLoading}
         />
 
         <div>
           {type && link && (
-            <button disabled={isLoading} type="submit">
+            <button disabled={btnLoading} type="submit">
               Save
             </button>
           )}
-          <button disabled={isLoading} onClick={backToPrevState}>
+          <button disabled={btnLoading} onClick={backToPrevState}>
             Back
           </button>
         </div>
@@ -120,12 +118,10 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
 };
 
 const ThirdState: React.FC<SettingsProps> = ({ settings }) => {
-  const { refetch: refetchCards } = cardsAPI.useGetCardsQuery();
-  const { isFetching } = decksAPI.useGetSettingsQuery();
   const [update, { isLoading: asL }] = decksAPI.useUpdateAutoSyncMutation();
   const [sync, { isLoading: sL }] = decksAPI.useSyncMutation();
   const [second, setSecond] = useState(false);
-  const btnLoading = isFetching || asL || sL;
+  const btnLoading = asL || sL;
 
   const stateToTrue = () => setSecond(true);
   const stateToFalse = () => setSecond(false);
@@ -134,11 +130,8 @@ const ThirdState: React.FC<SettingsProps> = ({ settings }) => {
     update(e.target.checked);
   };
 
-  const syncNow = async () => {
-    try {
-      await sync().unwrap();
-      refetchCards();
-    } catch (error) {}
+  const syncNow = () => {
+    sync();
   };
 
   if (second) return <SecondState backToPrevState={stateToFalse} />;
@@ -180,9 +173,9 @@ const ThirdState: React.FC<SettingsProps> = ({ settings }) => {
 interface LinkProps {
   type: SyncTypeEnum | undefined;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isLoading: boolean;
+  btnLoading: boolean;
 }
-const LinkComponent: React.FC<LinkProps> = ({ type, onChange, isLoading }) => {
+const LinkComponent: React.FC<LinkProps> = ({ type, onChange, btnLoading }) => {
   if (!type) return null;
 
   const hint =
@@ -195,7 +188,7 @@ const LinkComponent: React.FC<LinkProps> = ({ type, onChange, isLoading }) => {
       <div>
         <div>Link: </div>
         <input
-          disabled={isLoading}
+          disabled={btnLoading}
           type="text"
           name="link"
           onChange={onChange}

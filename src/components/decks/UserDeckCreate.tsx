@@ -1,25 +1,21 @@
 import React, { useRef } from "react";
-import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 
 export const UserDeckCreate: React.FC = () => {
-  const { refetch: refetchCards } = cardsAPI.useGetCardsQuery();
   const [create, { isLoading }] = decksAPI.useCreateMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const btnLoading = isLoading;
 
   const clickHandler = () => {
     fileInputRef?.current?.click();
   };
 
-  const createHandler = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const file = event?.target?.files?.[0];
-      if (!file) throw new Error();
-      const formData = new FormData();
-      formData.append("csv", file);
-      await create(formData).unwrap();
-      refetchCards();
-    } catch (error) {}
+  const createHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event?.target?.files?.[0];
+    if (!file) throw new Error();
+    const formData = new FormData();
+    formData.append("csv", file);
+    create(formData);
   };
 
   return (
@@ -29,7 +25,7 @@ export const UserDeckCreate: React.FC = () => {
         Format: frontPrimary, frontSecondary?, backPrimary, backSecondary?
       </div>
       <div>
-        <button disabled={isLoading} onClick={clickHandler}>
+        <button disabled={btnLoading} onClick={clickHandler}>
           Create deck
         </button>
         <input

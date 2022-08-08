@@ -1,6 +1,5 @@
 import React from "react";
 import { IUserDeck, MoveUserDeck } from "../../models/deck";
-import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
 
 interface UserDeckProps {
@@ -8,30 +7,22 @@ interface UserDeckProps {
 }
 
 export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
-  const { refetch: refetchCards } = cardsAPI.useGetCardsQuery();
-  const { isFetching } = decksAPI.useGetUserDecksQuery();
-  const [enable, { isLoading: enLoading }] = decksAPI.useEnableMutation();
-  const [move, { isLoading: mvLoading }] = decksAPI.useMoveMutation();
-  const [deleteUD, { isLoading: dlLoading }] = decksAPI.useDeleteMutation();
-  const [toggle, { isLoading: tgLoading }] = decksAPI.useToggleUDToPDMutation();
-  const [deleteDD, { isLoading: ddLoading }] =
-    decksAPI.useDeleteDynamicMutation();
+  const [enable, { isLoading: enL }] = decksAPI.useEnableMutation();
+  const [move, { isLoading: mvL }] = decksAPI.useMoveMutation();
+  const [deleteUD, { isLoading: dlL }] = decksAPI.useDeleteMutation();
+  const [toggle, { isLoading: tgL }] = decksAPI.useToggleUDToPDMutation();
+  const [deleteDD, { isLoading: ddL }] = decksAPI.useDeleteDynamicMutation();
+  const btnLoading = enL || mvL || dlL || tgL || ddL;
 
-  const btnLoading =
-    isFetching || enLoading || mvLoading || dlLoading || tgLoading || ddLoading;
-
-  const enableHandler = async () => {
-    try {
-      await enable(userDeck.id).unwrap();
-      refetchCards();
-    } catch (error) {}
+  const enableHandler = () => {
+    enable(userDeck.id);
   };
   const moveHandler = (position: MoveUserDeck["position"]) => {
     move({ userDeckId: userDeck.id, position });
   };
   const deleteHandler = () => {
     if (userDeck.dynamic) {
-      deleteDD();
+      deleteDD(userDeck.id);
     } else {
       deleteUD(userDeck.id);
     }

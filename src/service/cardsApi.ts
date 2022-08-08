@@ -7,7 +7,7 @@ import {
   UpdateType,
 } from "../models/flashcard";
 import { baseApi } from "./baseApi";
-import { decksAPI } from "./decksApi";
+import { updateUserDecksAction } from "./decksApi";
 
 export const cardsAPI = createApi({
   reducerPath: "cardsAPI",
@@ -40,7 +40,7 @@ export const cardsAPI = createApi({
           data: { userDeck },
         } = await queryFulfilled;
 
-        if (userDeck) dispatch(updateDecksAction(userDeck));
+        if (userDeck) dispatch(updateUserDecksAction(userDeck));
 
         let isRefetch = false;
         dispatch(
@@ -51,9 +51,7 @@ export const cardsAPI = createApi({
           })
         );
 
-        if (isRefetch) {
-          dispatch(cardsAPI.util.invalidateTags(["Cards"]));
-        }
+        if (isRefetch) dispatch(refetchCardsAction);
       },
     }),
     delete: build.mutation<{ result: boolean; userDeck?: IUserDeck }, string>({
@@ -79,7 +77,7 @@ export const cardsAPI = createApi({
           );
         }
 
-        if (userDeck) dispatch(updateDecksAction(userDeck));
+        if (userDeck) dispatch(updateUserDecksAction(userDeck));
       },
     }),
     favorite: build.mutation<IUserCard, string>({
@@ -141,13 +139,4 @@ export const cardsAPI = createApi({
   }),
 });
 
-const updateDecksAction = (userDeck: IUserDeck) =>
-  decksAPI.util.updateQueryData("getUserDecks", undefined, (draftDecks) => {
-    const index = draftDecks.findIndex((c) => c.id === userDeck.id);
-
-    if (index !== -1) {
-      draftDecks[index] = userDeck;
-    }
-
-    return draftDecks;
-  });
+export const refetchCardsAction = cardsAPI.util.invalidateTags(["Cards"]);

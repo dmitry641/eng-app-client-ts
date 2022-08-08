@@ -44,3 +44,5 @@ export interface IDecksSettings {
   dynamicSyncMessage?: string;
   dynamicCreated: boolean;
 }
+
+export type DeckSetResponse = { userDeck: IUserDeck; settings: IDecksSettings };
