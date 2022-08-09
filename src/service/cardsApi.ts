@@ -7,7 +7,7 @@ import {
   UpdateType,
 } from "../models/flashcard";
 import { baseApi } from "./baseApi";
-import { updateUserDecksAction } from "./decksApi";
+import { updateUserDeckAction } from "./decksApi";
 
 export const cardsAPI = createApi({
   reducerPath: "cardsAPI",
@@ -40,7 +40,7 @@ export const cardsAPI = createApi({
           data: { userDeck },
         } = await queryFulfilled;
 
-        if (userDeck) dispatch(updateUserDecksAction(userDeck));
+        if (userDeck) dispatch(updateUserDeckAction(userDeck));
 
         let isRefetch = false;
         dispatch(
@@ -77,7 +77,7 @@ export const cardsAPI = createApi({
           );
         }
 
-        if (userDeck) dispatch(updateUserDecksAction(userDeck));
+        if (userDeck) dispatch(updateUserDeckAction(userDeck));
       },
     }),
     favorite: build.mutation<IUserCard, string>({

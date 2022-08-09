@@ -4,10 +4,12 @@ import { decksAPI } from "../../service/decksApi";
 
 interface DeckProps {
   deck: IDeck;
+  isFetching: boolean;
 }
 
-export const Deck: React.FC<DeckProps> = ({ deck }) => {
+export const Deck: React.FC<DeckProps> = ({ deck, isFetching }) => {
   const [add, { isLoading }] = decksAPI.useAddPDtoUDMutation();
+  const btnLoading = isLoading || isFetching;
 
   const addHandler = () => {
     add(deck.id);
@@ -25,7 +27,7 @@ export const Deck: React.FC<DeckProps> = ({ deck }) => {
       <p>Name: {deck.name}</p>
       <p>Total cards count: {deck.totalCardsCount}</p>
       <p>Author: {deck.author}</p>
-      <button disabled={isLoading} onClick={addHandler}>
+      <button disabled={btnLoading} onClick={addHandler}>
         Add to the user decks
       </button>
     </div>

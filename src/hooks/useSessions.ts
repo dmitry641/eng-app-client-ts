@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ISession } from "../models/session";
 import { appResetAll } from "../redux/actions/app-actions";
-import { userService } from "../service/UserService";
+import { UserService } from "../service/UserService";
 import { errorHandler, sleep, TIMEOUTS } from "../utils";
 import { useAppDispatch } from "./useAppDispatch";
 
@@ -17,7 +17,7 @@ export const useSessions = () => {
       setDisabled(true);
       setShowList(true);
       setLoading(true);
-      const res = await userService.getSessions();
+      const res = await UserService.getSessions();
       setSessions(res.data);
       setLoading(false);
       await sleep(TIMEOUTS.short);
@@ -29,7 +29,7 @@ export const useSessions = () => {
 
   const resetSessions = async () => {
     try {
-      await userService.resetSessions();
+      await UserService.resetSessions();
       dispatch(appResetAll());
     } catch (error) {
       errorHandler(error);

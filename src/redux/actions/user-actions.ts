@@ -1,5 +1,9 @@
-import { SignInInput, SignUpInput } from "../../models/user";
-import { userService } from "../../service/UserService";
+import {
+  SignInInput,
+  SignUpInput,
+  UpdUserSettingsType,
+} from "../../models/user";
+import { UserService } from "../../service/UserService";
 import { errorHandler, errorMsgGenerator, sleep, TIMEOUTS } from "../../utils";
 import { appActions } from "../reducers/AppSlice";
 import { userActions } from "../reducers/UserSlice";
@@ -9,7 +13,7 @@ import { appResetAll } from "./app-actions";
 export function userInit() {
   return async (dispatch: RootDispatch) => {
     try {
-      const res = await userService.getUser();
+      const res = await UserService.getUser();
       dispatch(userActions.setUser(res.data.user));
       dispatch(userActions.setSettings(res.data.settings));
       dispatch(appActions.setLoading(false));
@@ -22,7 +26,7 @@ export function userInit() {
 export function userSignIn(signInInput: SignInInput) {
   return async (dispatch: RootDispatch) => {
     try {
-      const res = await userService.signIn(signInInput);
+      const res = await UserService.signIn(signInInput);
       dispatch(userActions.setUser(res.data.user));
       dispatch(userActions.setSettings(res.data.settings));
     } catch (error) {
@@ -36,7 +40,7 @@ export function userSignIn(signInInput: SignInInput) {
 export function userSignUp(signUpInput: SignUpInput) {
   return async (dispatch: RootDispatch) => {
     try {
-      const res = await userService.signUp(signUpInput);
+      const res = await UserService.signUp(signUpInput);
       dispatch(userActions.setUser(res.data.user));
       dispatch(userActions.setSettings(res.data.settings));
     } catch (error) {
@@ -50,8 +54,21 @@ export function userSignUp(signUpInput: SignUpInput) {
 export function userLogout() {
   return async (dispatch: RootDispatch) => {
     try {
-      await userService.logout();
+      await UserService.logout();
       dispatch(appResetAll());
+    } catch (error) {
+      errorHandler(error);
+    }
+  };
+}
+
+export function userUpdateSettings(obj: UpdUserSettingsType) {
+  return async (dispatch: RootDispatch) => {
+    try {
+      dispatch(userActions.setBtnLoading(true));
+      const res = await UserService.updateSettings(obj);
+      dispatch(userActions.setSettings(res.data));
+      dispatch(userActions.setBtnLoading(false));
     } catch (error) {
       errorHandler(error);
     }

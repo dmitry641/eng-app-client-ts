@@ -7,6 +7,7 @@ interface UserState {
   error: string;
   user: IUser;
   settings: IUserSettings;
+  btnLoading: boolean;
 }
 
 const initialState: UserState = {
@@ -14,6 +15,7 @@ const initialState: UserState = {
   error: "",
   user: {} as IUser,
   settings: {} as IUserSettings,
+  btnLoading: false,
 };
 
 const userSlice = createSlice({
@@ -30,6 +32,9 @@ const userSlice = createSlice({
     },
     setError(state, action: PayloadAction<string>) {
       state.error = action.payload;
+    },
+    setBtnLoading(state, action: PayloadAction<boolean>) {
+      state.btnLoading = action.payload;
     },
     reset() {
       localStorage.removeItem(LS_KEY);

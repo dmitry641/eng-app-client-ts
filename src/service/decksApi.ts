@@ -40,7 +40,7 @@ export const decksAPI = createApi({
       }),
       onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
         const { data: userDeck } = await queryFulfilled;
-        dispatch(updateUserDecksAction(userDeck));
+        dispatch(updateUserDeckAction(userDeck));
         dispatch(refetchCardsAction);
       },
     }),
@@ -80,7 +80,7 @@ export const decksAPI = createApi({
       }),
       onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
         const { data: userDeck } = await queryFulfilled;
-        dispatch(updateUserDecksAction(userDeck));
+        dispatch(updateUserDeckAction(userDeck));
       },
     }),
 
@@ -114,7 +114,7 @@ export const decksAPI = createApi({
       }),
       onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
         const { data: settings } = await queryFulfilled;
-        dispatch(updateDecksSettingsAction(settings));
+        dispatch(setDecksSettingsAction(settings));
       },
     }),
     updateAutoSync: build.mutation<IDecksSettings, boolean>({
@@ -125,7 +125,7 @@ export const decksAPI = createApi({
       }),
       onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
         const { data: settings } = await queryFulfilled;
-        dispatch(updateDecksSettingsAction(settings));
+        dispatch(setDecksSettingsAction(settings));
       },
     }),
 
@@ -138,8 +138,8 @@ export const decksAPI = createApi({
         const {
           data: { settings, userDeck },
         } = await queryFulfilled;
-        dispatch(updateUserDecksAction(userDeck));
-        dispatch(updateDecksSettingsAction(settings));
+        dispatch(updateUserDeckAction(userDeck));
+        dispatch(setDecksSettingsAction(settings));
         dispatch(refetchCardsAction);
       },
     }),
@@ -152,7 +152,7 @@ export const decksAPI = createApi({
         const {
           data: { userDeck, settings },
         } = await queryFulfilled;
-        dispatch(updateDecksSettingsAction(settings));
+        dispatch(setDecksSettingsAction(settings));
         dispatch(appendUserDeckAction(userDeck));
       },
     }),
@@ -163,14 +163,14 @@ export const decksAPI = createApi({
       }),
       onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
         const { data: settings } = await queryFulfilled;
-        dispatch(updateDecksSettingsAction(settings));
+        dispatch(setDecksSettingsAction(settings));
         dispatch(filterUserDecksAction(userDeckId));
       },
     }),
   }),
 });
 
-export const updateUserDecksAction = (userDeck: IUserDeck) =>
+export const updateUserDeckAction = (userDeck: IUserDeck) =>
   decksAPI.util.updateQueryData("getUserDecks", undefined, (draftUserDecks) => {
     const index = draftUserDecks.findIndex((c) => c.id === userDeck.id);
 
@@ -181,16 +181,16 @@ export const updateUserDecksAction = (userDeck: IUserDeck) =>
     return draftUserDecks;
   });
 
-export const filterUserDecksAction = (userDeckId: string) =>
+const filterUserDecksAction = (userDeckId: string) =>
   decksAPI.util.updateQueryData("getUserDecks", undefined, (draftUserDecks) => {
     const filtered = draftUserDecks.filter((d) => d.id !== userDeckId);
     return filtered;
   });
 
-export const updateDecksSettingsAction = (settings: IDecksSettings) =>
+const setDecksSettingsAction = (settings: IDecksSettings) =>
   decksAPI.util.updateQueryData("getSettings", undefined, () => settings);
 
-export const appendUserDeckAction = (userDeck: IUserDeck) =>
+const appendUserDeckAction = (userDeck: IUserDeck) =>
   decksAPI.util.updateQueryData("getUserDecks", undefined, (draftDecks) => {
     draftDecks.push(userDeck);
     return draftDecks;
