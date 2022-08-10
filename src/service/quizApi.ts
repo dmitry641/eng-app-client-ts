@@ -140,24 +140,31 @@ export const quizAPI = createApi({
       },
     }),
 
-    getImages: build.query<IImage[], { search: string; width?: number }>({
-      query: ({ search, width }) => ({
+    getImages: build.query<IImage[], string>({
+      query: (search) => ({
         url: "/quiz/images",
         params: {
           search,
-          width,
+          width: window.innerWidth,
         },
       }),
       providesTags: () => ["Image"],
-    }),
-    getRandomImages: build.query<IImage[], { width?: number }>({
-      query: ({ width }) => ({
-        url: "/quiz/images/random",
-        params: {
-          width,
-        },
-      }),
-      providesTags: () => ["Image"],
+      transformResponse: async (images: IImage[]): Promise<IImage[]> => {
+        for (const image of images) {
+          const responses = await Promise.all([
+            fetch(image.original),
+            fetch(image.thumbnail),
+          ]);
+          const blobs = await Promise.all([
+            responses[0].blob(),
+            responses[1].blob(),
+          ]);
+          image.original = URL.createObjectURL(blobs[0]);
+          image.thumbnail = URL.createObjectURL(blobs[1]);
+        }
+
+        return images;
+      },
     }),
   }),
 });

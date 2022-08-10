@@ -1,7 +1,7 @@
 import React from "react";
-
 import { IQuestion, IUserTopic } from "../../models/quiz";
 import { quizAPI } from "../../service/quizApi";
+import { Gallery } from "./Gallery";
 
 interface CurrentUTProps {
   currentUT: IUserTopic;
@@ -25,7 +25,7 @@ export const CurrentUT: React.FC<CurrentUTProps> = ({
     <div>
       <div>{currentUT.topicName}</div>
       <div>{question.text}</div>
-      <div>Image</div>
+      <Gallery topicName={currentUT.topicName} />
       <div>
         <button disabled={btnLoading} onClick={nextHandler}>
           Next

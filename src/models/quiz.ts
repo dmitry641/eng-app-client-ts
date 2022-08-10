@@ -38,8 +38,10 @@ export type AddChangeResponse = {
 };
 
 export interface IImage {
+  id: string;
   original: string;
   thumbnail: string;
   name: string;
   userLink: string;
+  description: string;
 }
