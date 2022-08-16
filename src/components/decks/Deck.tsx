@@ -26,7 +26,7 @@ export const Deck: React.FC<DeckProps> = ({ deck, isFetching }) => {
       <p>Id: {deck.id}</p>
       <p>Name: {deck.name}</p>
       <p>Total cards count: {deck.totalCardsCount}</p>
-      <p>Author: {deck.author}</p>
+      <p>Author: {deck.createdBy.name}</p>
       <button disabled={btnLoading} onClick={addHandler}>
         Add to the user decks
       </button>

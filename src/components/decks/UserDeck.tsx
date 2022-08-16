@@ -10,7 +10,7 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
   const [enable, { isLoading: enL }] = decksAPI.useEnableMutation();
   const [move, { isLoading: mvL }] = decksAPI.useMoveMutation();
   const [deleteUD, { isLoading: dlL }] = decksAPI.useDeleteMutation();
-  const [toggle, { isLoading: tgL }] = decksAPI.useToggleUDToPDMutation();
+  const [publish, { isLoading: tgL }] = decksAPI.usePublishMutation();
   const [deleteDD, { isLoading: ddL }] = decksAPI.useDeleteDynamicMutation();
   const btnLoading = enL || mvL || dlL || tgL || ddL;
 
@@ -27,8 +27,8 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
       deleteUD(userDeck.id);
     }
   };
-  const toggleHandler = () => {
-    toggle(userDeck.id);
+  const publishHandler = () => {
+    publish(userDeck.id);
   };
 
   return (
@@ -40,9 +40,9 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
       }}
     >
       <p>
-        Id: {userDeck.id} | DeckId: {userDeck.deckId}
+        Id: {userDeck.id} | DeckId: {userDeck.deck.id}
       </p>
-      <p>Name: {userDeck.deckName}</p>
+      <p>Name: {userDeck.deck.name}</p>
       <p>Order: {userDeck.order}</p>
       <p>
         {`Cards count: ${userDeck.cardsCount} | Cards learned: ${userDeck.cardsLearned}`}
@@ -60,8 +60,8 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
         <button disabled={btnLoading} onClick={deleteHandler}>
           Delete
         </button>
-        {userDeck.canPublicIt && (
-          <button disabled={btnLoading} onClick={toggleHandler}>
+        {userDeck.canPublish && (
+          <button disabled={btnLoading} onClick={publishHandler}>
             {userDeck.published ? "Unpublish" : "Publish"}
           </button>
         )}

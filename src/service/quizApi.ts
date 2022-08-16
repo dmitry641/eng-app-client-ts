@@ -37,9 +37,9 @@ export const quizAPI = createApi({
       query: () => "/quiz",
       providesTags: () => ["UserTopic"],
     }),
-    change: build.mutation<AddChangeResponse, string>({
+    select: build.mutation<AddChangeResponse, string>({
       query: (userTopicId) => ({
-        url: "/quiz/change",
+        url: "/quiz/select",
         method: "POST",
         body: { userTopicId },
       }),

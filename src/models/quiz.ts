@@ -3,7 +3,7 @@ export interface IUserTopic {
   updatedAt: Date;
   topicId: string;
   totalQuestionCount: number;
-  userQuestions: string[];
+  learnedQuestions: string[];
   topicName: string;
   status: UTStatus;
   questionsInRow: number;

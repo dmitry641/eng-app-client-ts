@@ -1,14 +1,15 @@
+import { IUser } from "./user";
+
 export interface IUserDeck {
   id: string;
-  deckId: string;
+  deck: IDeck;
   dynamic: boolean;
   enabled: boolean;
   deleted: boolean;
   order: number;
   cardsCount: number;
   cardsLearned: number;
-  deckName: string;
-  canPublicIt: boolean;
+  canPublish: boolean;
   published: boolean;
 }
 
@@ -21,10 +22,8 @@ export interface IDeck {
   id: string;
   name: string;
   public: boolean;
-  canBePublic: boolean;
-  createdBy: string;
+  createdBy: Omit<IUser, "email">;
   totalCardsCount: number;
-  author: string;
 }
 
 export enum SyncTypeEnum {

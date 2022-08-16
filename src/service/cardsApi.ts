@@ -1,9 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
-import { IUserDeck } from "../models/deck";
 import {
   ICardsSettings,
   IUserCard,
   LearnType,
+  LrnDelType,
   UpdateType,
 } from "../models/flashcard";
 import { baseApi } from "./baseApi";
@@ -26,10 +26,7 @@ export const cardsAPI = createApi({
       query: () => "/flashcards/settings",
       providesTags: () => ["Settings"],
     }),
-    learn: build.mutation<
-      { userCard: IUserCard; userDeck?: IUserDeck },
-      LearnType
-    >({
+    learn: build.mutation<LrnDelType, LearnType>({
       query: (object) => ({
         url: "/flashcards",
         method: "POST",
@@ -54,17 +51,17 @@ export const cardsAPI = createApi({
         if (isRefetch) dispatch(refetchCardsAction);
       },
     }),
-    delete: build.mutation<{ result: boolean; userDeck?: IUserDeck }, string>({
+    delete: build.mutation<LrnDelType, string>({
       query: (userCardId) => ({
         url: `/flashcards/${userCardId}`,
         method: "DELETE",
       }),
       onQueryStarted: async (userCardId, { dispatch, queryFulfilled }) => {
         const {
-          data: { result, userDeck },
+          data: { userCard, userDeck },
         } = await queryFulfilled;
 
-        if (result) {
+        if (userCard) {
           dispatch(
             cardsAPI.util.updateQueryData(
               "getCards",

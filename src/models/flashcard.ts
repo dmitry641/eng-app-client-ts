@@ -1,9 +1,11 @@
+import { IUserDeck } from "./deck";
+
 export interface IUserCard {
   id: string;
-  cardId: string;
+  card: ICard;
   userDeckId: string;
   favorite: boolean;
-  card: ICard;
+  deleted: boolean;
 }
 
 interface ICard {
@@ -25,6 +27,11 @@ export enum StatusEnum {
   medium = "medium",
   hard = "hard",
 }
+
+export type LrnDelType = {
+  userCard: IUserCard;
+  userDeck?: IUserDeck;
+};
 
 export interface ICardsSettings {
   dynamicHighPriority: boolean;

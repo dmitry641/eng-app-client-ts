@@ -8,7 +8,7 @@ export const FlashcardsComponent: React.FC = () => {
     data: flashcards,
     isLoading: fL,
     isFetching,
-  } = cardsAPI.useGetCardsQuery();
+  } = cardsAPI.useGetCardsQuery(undefined, { refetchOnFocus: true });
   const { data: settings, isLoading: sL } = cardsAPI.useGetSettingsQuery();
   const loading = fL || sL;
 

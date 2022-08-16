@@ -31,7 +31,6 @@ export const decksAPI = createApi({
         dispatch(refetchCardsAction);
       },
     }),
-
     enable: build.mutation<IUserDeck, string>({
       query: (userDeckId) => ({
         url: "/decks/enable",
@@ -61,7 +60,7 @@ export const decksAPI = createApi({
         );
       },
     }),
-    delete: build.mutation<boolean, string>({
+    delete: build.mutation<IUserDeck, string>({
       query: (userDeckId) => ({
         url: `/decks/delete/${userDeckId}`,
         method: "DELETE",
@@ -72,9 +71,9 @@ export const decksAPI = createApi({
         dispatch(filterUserDecksAction(userDeckId));
       },
     }),
-    toggleUDToPD: build.mutation<IUserDeck, string>({
+    publish: build.mutation<IUserDeck, string>({
       query: (userDeckId) => ({
-        url: "/decks/toggle",
+        url: "/decks/publish",
         method: "POST",
         body: { userDeckId },
       }),
@@ -156,13 +155,15 @@ export const decksAPI = createApi({
         dispatch(appendUserDeckAction(userDeck));
       },
     }),
-    deleteDynamic: build.mutation<IDecksSettings, string>({
+    deleteDynamic: build.mutation<DeckSetResponse, string>({
       query: () => ({
         url: "/decks/dynamic/",
         method: "DELETE",
       }),
       onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
-        const { data: settings } = await queryFulfilled;
+        const {
+          data: { settings },
+        } = await queryFulfilled;
         dispatch(setDecksSettingsAction(settings));
         dispatch(filterUserDecksAction(userDeckId));
       },

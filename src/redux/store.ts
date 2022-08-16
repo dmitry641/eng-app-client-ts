@@ -1,4 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { cardsAPI } from "../service/cardsApi";
 import { decksAPI } from "../service/decksApi";
 import { quizAPI } from "../service/quizApi";
@@ -24,6 +25,8 @@ export const store = configureStore({
       quizAPI.middleware
     ),
 });
+
+setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type RootDispatch = typeof store.dispatch;
