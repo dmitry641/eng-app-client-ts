@@ -1,5 +1,7 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import { privateRoutes, publicRoutes, RoutesEnum } from "../../routes";
 import { ModulesInit } from "./ModulesInit";
@@ -10,6 +12,7 @@ export const AppRouter: React.FC = () => {
 
   return (
     <>
+      <ToastContainer hideProgressBar />
       {user.isAuth && <ModulesInit />}
       <Routes>
         {routes.map(({ path, Component }) => (

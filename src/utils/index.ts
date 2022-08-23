@@ -1,4 +1,5 @@
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 export enum HeaderTitleEnum {
   account = "Account",
@@ -20,12 +21,17 @@ export function sleep(ms: number) {
 }
 
 export function errorHandler(error: unknown) {
-  console.log(error);
+  const msg = errorMsgGenerator(error);
+  toast(msg);
 }
-export function errorMsgGenerator(error: unknown) {
-  const err = error as AxiosApiError;
-  const msg = err.response?.data?.message || "Error";
-  return msg;
+export function errorMsgGenerator(error: unknown): string {
+  let msg;
+  if (axios.isAxiosError(error)) {
+    const err = error as AxiosApiError;
+    msg = err?.response?.data?.message;
+  }
+
+  return msg || "Error";
 }
 
 export const API_URL = process.env.REACT_APP_SERVER_URL + "/api";

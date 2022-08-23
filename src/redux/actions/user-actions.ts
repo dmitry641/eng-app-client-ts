@@ -16,9 +16,10 @@ export function userInit() {
       const res = await UserService.getUser();
       dispatch(userActions.setUser(res.data.user));
       dispatch(userActions.setSettings(res.data.settings));
-      dispatch(appActions.setLoading(false));
     } catch (error) {
       errorHandler(error);
+    } finally {
+      dispatch(appActions.setLoading(false));
     }
   };
 }
@@ -32,7 +33,6 @@ export function userSignIn(signInInput: SignInInput) {
     } catch (error) {
       const msg = errorMsgGenerator(error);
       dispatch(userSetError(msg));
-      errorHandler(error);
     }
   };
 }
@@ -46,7 +46,6 @@ export function userSignUp(signUpInput: SignUpInput) {
     } catch (error) {
       const msg = errorMsgGenerator(error);
       dispatch(userSetError(msg));
-      errorHandler(error);
     }
   };
 }

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { RoutesEnum } from "../../routes";
 import { cardsAPI } from "../../service/cardsApi";
 import { decksAPI } from "../../service/decksApi";
@@ -36,5 +37,6 @@ export function appResetAll() {
     dispatch(cardsAPI.internalActions.resetApiState());
     dispatch(quizAPI.internalActions.resetApiState());
     dispatch(appInit()); // ???
+    toast("Unauthorized...");
   };
 }
