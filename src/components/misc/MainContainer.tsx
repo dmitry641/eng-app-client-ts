@@ -1,8 +1,9 @@
+import { Box, Breakpoint, Container } from "@mui/material";
 import type * as CSS from "csstype";
 import React, { PropsWithChildren } from "react";
 
 interface MainContainerProps extends PropsWithChildren {
-  maxWidth?: CSS.Property.MaxWidth; // FIXME
+  maxWidth?: Breakpoint;
   mt?: CSS.Property.MarginTop;
   mb?: CSS.Property.MarginBottom;
 }
@@ -14,8 +15,8 @@ export const MainContainer: React.FC<MainContainerProps> = ({
   mb = 2,
 }) => {
   return (
-    <div>
-      <div>{children}</div>
-    </div>
+    <Box mt={mt} mb={mb}>
+      <Container maxWidth={maxWidth}>{children}</Container>
+    </Box>
   );
 };

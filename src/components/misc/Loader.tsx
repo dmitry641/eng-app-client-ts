@@ -1,3 +1,4 @@
+import { Box, CircularProgress } from "@mui/material";
 import { Property } from "csstype";
 import React from "react";
 
@@ -12,5 +13,14 @@ export const Loader: React.FC<LoaderProps> = ({
   justifyContent = "center",
   p = 3,
 }) => {
-  return <div>Loading...</div>;
+  return (
+    <Box
+      p={p}
+      display="flex"
+      alignItems={alignItems}
+      justifyContent={justifyContent}
+    >
+      <CircularProgress />
+    </Box>
+  );
 };
