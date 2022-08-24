@@ -1,4 +1,6 @@
 import React, { FormEvent, useEffect, useState } from "react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { quizAPI } from "../../service/quizApi";
 
 interface GalleryProps {
@@ -23,18 +25,19 @@ export const Gallery: React.FC<GalleryProps> = ({ topicName }) => {
       <hr />
       <SearchComponent setQuery={setQuery} />
 
-      <div>
-        <img
-          width="400px"
-          src={images[0].original}
-          alt={images[0].description}
-        />
-      </div>
-      <div>
+      <Carousel
+        infiniteLoop
+        emulateTouch
+        showStatus={false}
+        showIndicators={false}
+      >
         {images.map((i) => (
-          <img key={i.id} width="100px" src={i.thumbnail} alt={i.description} />
+          <div key={i.id}>
+            <img src={i.original} alt={i.description} />
+          </div>
         ))}
-      </div>
+      </Carousel>
+
       <hr />
     </>
   );
