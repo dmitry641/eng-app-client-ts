@@ -27,12 +27,15 @@ export function userInit() {
 export function userSignIn(signInInput: SignInInput) {
   return async (dispatch: RootDispatch) => {
     try {
+      dispatch(userActions.setBtnLoading(true));
       const res = await UserService.signIn(signInInput);
       dispatch(userActions.setUser(res.data.user));
       dispatch(userActions.setSettings(res.data.settings));
     } catch (error) {
       const msg = errorMsgGenerator(error);
       dispatch(userSetError(msg));
+    } finally {
+      dispatch(userActions.setBtnLoading(false));
     }
   };
 }
@@ -40,12 +43,15 @@ export function userSignIn(signInInput: SignInInput) {
 export function userSignUp(signUpInput: SignUpInput) {
   return async (dispatch: RootDispatch) => {
     try {
+      dispatch(userActions.setBtnLoading(true));
       const res = await UserService.signUp(signUpInput);
       dispatch(userActions.setUser(res.data.user));
       dispatch(userActions.setSettings(res.data.settings));
     } catch (error) {
       const msg = errorMsgGenerator(error);
       dispatch(userSetError(msg));
+    } finally {
+      dispatch(userActions.setBtnLoading(false));
     }
   };
 }
@@ -77,7 +83,7 @@ export function userUpdateSettings(obj: UpdUserSettingsType) {
 export function userSetError(msg: string) {
   return async (dispatch: RootDispatch) => {
     dispatch(userActions.setError(msg));
-    await sleep(TIMEOUTS.xl);
+    await sleep(TIMEOUTS.xl * 2);
     dispatch(userActions.setError(""));
   };
 }

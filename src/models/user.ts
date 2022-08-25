@@ -16,9 +16,11 @@ export type UserResponseType = {
 export interface SignInInput {
   email: string;
   password: string;
+  reToken: string;
 }
 export interface SignUpInput extends SignInInput {
   name: string;
+  darkMode: boolean;
 }
 
 export enum UpdUserSettingsEnum {

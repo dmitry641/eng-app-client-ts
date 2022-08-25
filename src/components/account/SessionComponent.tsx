@@ -1,3 +1,5 @@
+import { Button, Typography } from "@mui/material";
+import { Stack } from "@mui/system";
 import React from "react";
 import { useSessions } from "../../hooks/useSessions";
 import { SessionsList } from "./SessionsList";
@@ -7,22 +9,26 @@ export const SessionComponent: React.FC = () => {
     useSessions();
 
   return (
-    <div>
-      <div>Sessions:</div>
-      <div>
+    <>
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <Typography variant="body1">Sessions:</Typography>
         {!showList ? (
-          <button disabled={disabled} onClick={getSessions}>
+          <Button variant="contained" disabled={disabled} onClick={getSessions}>
             Get sessions
-          </button>
+          </Button>
         ) : (
-          <button disabled={disabled} onClick={resetSessions}>
+          <Button
+            variant="outlined"
+            color="error"
+            disabled={disabled}
+            onClick={resetSessions}
+          >
             Reset sessions
-          </button>
+          </Button>
         )}
-      </div>
-      <div>
-        <SessionsList loading={loading} sessions={sessions}></SessionsList>
-      </div>
-    </div>
+      </Stack>
+
+      <SessionsList loading={loading} sessions={sessions}></SessionsList>
+    </>
   );
 };

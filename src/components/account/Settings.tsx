@@ -1,3 +1,4 @@
+import { FormControlLabel, FormGroup, Switch } from "@mui/material";
 import React, { ChangeEvent } from "react";
 import { useActions } from "../../hooks/useActions";
 import { useAppSelector } from "../../hooks/useAppSelector";
@@ -15,16 +16,18 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div>
-      <input
+    <FormGroup>
+      <FormControlLabel
         disabled={user.btnLoading}
-        type="checkbox"
-        name={UpdUserSettingsEnum.darkMode}
-        id={UpdUserSettingsEnum.darkMode}
-        checked={user.settings.darkMode}
-        onChange={changeHandler}
+        control={
+          <Switch
+            name={UpdUserSettingsEnum.darkMode}
+            checked={user.settings.darkMode}
+            onChange={changeHandler}
+          />
+        }
+        label="Dark mode"
       />
-      <label htmlFor={UpdUserSettingsEnum.darkMode}>Dark mode</label>
-    </div>
+    </FormGroup>
   );
 };

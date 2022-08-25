@@ -1,3 +1,4 @@
+import { Box, Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useActions } from "../../hooks/useActions";
 import { useAppSelector } from "../../hooks/useAppSelector";
@@ -9,14 +10,18 @@ export const Account: React.FC = () => {
   const { userLogout } = useActions();
 
   return (
-    <div>
-      <div>Name: {user.name}</div>
-      <div>Email: {user.email}</div>
+    <Stack spacing={2}>
+      <Typography variant="h6">Welcome, {user.name}!</Typography>
+      <Typography>Email: {user.email}</Typography>
+
       <Settings />
       <SessionComponent />
-      <div>
-        <button onClick={() => userLogout()}>Logout</button>
-      </div>
-    </div>
+
+      <Box>
+        <Button variant="outlined" onClick={() => userLogout()}>
+          Logout
+        </Button>
+      </Box>
+    </Stack>
   );
 };

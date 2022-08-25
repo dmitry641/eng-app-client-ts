@@ -1,3 +1,4 @@
+import { Stack } from "@mui/material";
 import React from "react";
 import { ISession } from "../../models/session";
 import { Loader } from "../misc/Loader";
@@ -15,10 +16,10 @@ export const SessionsList: React.FC<SessionsListProps> = ({
   if (loading) return <Loader />;
   if (sessions.length === 0) return null;
   return (
-    <div>
+    <Stack spacing={1}>
       {sessions.map((session) => (
         <Session session={session} key={session.id} />
       ))}
-    </div>
+    </Stack>
   );
 };

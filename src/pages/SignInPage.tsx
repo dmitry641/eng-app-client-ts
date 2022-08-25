@@ -1,59 +1,118 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import React, {
+  FormEvent,
+  LegacyRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useNavigate } from "react-router-dom";
+
 import { MainContainer } from "../components/misc/MainContainer";
 import { useActions } from "../hooks/useActions";
 import { useAppSelector } from "../hooks/useAppSelector";
 import { RoutesEnum } from "../routes";
 
 export const SignInPage: React.FC = () => {
+  const darkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const user = useAppSelector((state) => state.user);
-  const { userSignIn } = useActions();
+  const { userSignIn, userSetError } = useActions();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const reRef = useRef<ReCAPTCHA>();
+  const navigate = useNavigate();
 
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (user.error) reRef?.current?.reset();
+  }, [user.error]);
+
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    userSignIn({ email, password });
+    const reToken = reRef?.current?.getValue();
+    if (!reToken) {
+      userSetError("ReCaptcha is required");
+      return;
+    }
+    userSignIn({ email, password, reToken });
   };
 
   return (
-    <>
-      <MainContainer>
-        <div>Sign in</div>
-        <form onSubmit={submitHandler}>
-          <div>
-            <input
+    <MainContainer maxWidth="xs">
+      <Box mt={8}>
+        <Typography variant="h5">Sign in</Typography>
+
+        <Box mt={2} component="form" onSubmit={submitHandler}>
+          <Stack spacing={2}>
+            <TextField
+              disabled={user.btnLoading}
+              variant="outlined"
               required
+              fullWidth
+              label="Email"
               type="email"
-              placeholder="Email..."
               name="email"
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </div>
-          <div>
-            <input
+
+            <TextField
+              disabled={user.btnLoading}
+              variant="outlined"
               required
+              fullWidth
+              label="Password"
               type="password"
-              placeholder="Password..."
               name="password"
               autoComplete="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-          </div>
-          {user.error && <div>Error: {user.error}</div>}
-          <div>
-            <button type="submit">Sign In</button>
-          </div>
-        </form>
-        <div>
-          <Link to={RoutesEnum.SIGNUP}>
-            <p>Don't have an account? Sign up</p>
+
+            <ReCAPTCHA
+              theme={darkMode ? "dark" : "light"}
+              sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY as string}
+              ref={reRef as LegacyRef<ReCAPTCHA>}
+            />
+
+            {user.error && (
+              <Typography color="error" variant="h6">
+                {user.error}
+              </Typography>
+            )}
+
+            <Button
+              disabled={user.btnLoading}
+              type="submit"
+              fullWidth
+              variant="contained"
+            >
+              Sign In
+            </Button>
+          </Stack>
+        </Box>
+
+        <Box mt={2} textAlign="right">
+          <Link
+            color="inherit"
+            variant="body1"
+            component="button"
+            underline="hover"
+            onClick={() => navigate(RoutesEnum.SIGNUP)}
+          >
+            Don't have an account? Sign up
           </Link>
-        </div>
-      </MainContainer>
-    </>
+        </Box>
+      </Box>
+    </MainContainer>
   );
 };
