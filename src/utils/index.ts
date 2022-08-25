@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { toast } from "react-toastify";
+import { enqueueSnackbar } from "notistack";
 
 export enum HeaderTitleEnum {
   account = "Account",
@@ -22,7 +22,7 @@ export function sleep(ms: number) {
 
 export function errorHandler(error: unknown) {
   const msg = errorMsgGenerator(error);
-  toast(msg);
+  enqueueSnackbar(msg, { variant: "error" });
 }
 export function errorMsgGenerator(error: unknown): string {
   let msg;

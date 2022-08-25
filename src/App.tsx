@@ -1,7 +1,7 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import { SnackbarProvider } from "notistack";
 import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import { AppRouter } from "./components/app/AppRouter";
 import { Loader } from "./components/misc/Loader";
 import { useAppDispatch } from "./hooks/useAppDispatch";
@@ -20,8 +20,10 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <SnackbarProvider
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      />
       <AppComponent />
-      <ToastContainer hideProgressBar />
     </ThemeProvider>
   );
 };

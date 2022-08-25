@@ -4,7 +4,7 @@ import {
   Middleware,
   MiddlewareAPI,
 } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
+import { enqueueSnackbar } from "notistack";
 import { BaseQueryError } from "../../utils";
 
 export const rtkErrorMiddleware: Middleware =
@@ -13,7 +13,7 @@ export const rtkErrorMiddleware: Middleware =
       const err = action.payload as BaseQueryError;
       if (err.data?.status === 401) return;
       const msg = err.data?.message || "Error";
-      toast(msg);
+      enqueueSnackbar(msg, { variant: "error" });
     }
 
     return next(action);
