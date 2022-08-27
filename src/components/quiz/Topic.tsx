@@ -1,6 +1,8 @@
+import { Box, Typography } from "@mui/material";
 import React from "react";
 import { ITopic } from "../../models/quiz";
 import { quizAPI } from "../../service/quizApi";
+import { MyPaper } from "../misc/MyPaper";
 
 interface TopicProps {
   topic: ITopic;
@@ -14,18 +16,20 @@ export const Topic: React.FC<TopicProps> = ({ topic }) => {
   };
 
   return (
-    <div
-      style={{
-        padding: "10px",
-        margin: "10px",
-        border: "1px solid black",
-        display: "inline-block",
-        cursor: "pointer",
-        backgroundColor: `${isLoading ? "gray" : "none"}`,
-      }}
-      onClick={addHandler}
-    >
-      {topic.topicName}
-    </div>
+    <Box mr={2} mt={2}>
+      <MyPaper
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 2,
+          cursor: isLoading ? "default" : "pointer",
+          backgroundColor: isLoading ? "gray" : "none",
+        }}
+        onClick={addHandler}
+      >
+        <Typography noWrap>{topic.topicName}</Typography>
+      </MyPaper>
+    </Box>
   );
 };

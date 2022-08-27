@@ -1,3 +1,4 @@
+import { Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { IQuestion, IUserTopic } from "../../models/quiz";
 import { quizAPI } from "../../service/quizApi";
@@ -22,15 +23,20 @@ export const CurrentUT: React.FC<CurrentUTProps> = ({
   };
 
   return (
-    <div>
-      <div>{currentUT.topicName}</div>
-      <div>{question.text}</div>
+    <Stack spacing={2}>
+      <Typography align="center" variant="body2" color="textSecondary">
+        {currentUT.topicName}
+      </Typography>
+
+      <Typography align="center" variant="h6">
+        {question.text}
+      </Typography>
+
       <Gallery topicName={currentUT.topicName} />
-      <div>
-        <button disabled={btnLoading} onClick={nextHandler}>
-          Next
-        </button>
-      </div>
-    </div>
+
+      <Button variant="contained" disabled={btnLoading} onClick={nextHandler}>
+        Next
+      </Button>
+    </Stack>
   );
 };

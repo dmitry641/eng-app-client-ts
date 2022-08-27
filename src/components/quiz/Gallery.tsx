@@ -1,3 +1,5 @@
+import { Casino, Search } from "@mui/icons-material";
+import { Box, IconButton, Skeleton, Stack, TextField } from "@mui/material";
 import React, { FormEvent, useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -13,40 +15,49 @@ export const Gallery: React.FC<GalleryProps> = ({ topicName }) => {
     isLoading,
     isFetching,
   } = quizAPI.useGetImagesQuery(query);
-  const loading = isLoading || isFetching;
+  const loading = isLoading || isFetching || !images?.length;
 
   useEffect(() => {
     setQuery(topicName);
   }, [topicName]);
 
-  if (loading || !images?.length) return <div>skeleton</div>;
   return (
     <>
-      <hr />
-      <SearchComponent setQuery={setQuery} />
+      <SearchComponent loading={loading} setQuery={setQuery} />
 
-      <Carousel
-        infiniteLoop
-        emulateTouch
-        showStatus={false}
-        showIndicators={false}
-      >
-        {images.map((i) => (
-          <div key={i.id}>
-            <img src={i.original} alt={i.description} />
-          </div>
-        ))}
-      </Carousel>
-
-      <hr />
+      <Box height="55vh">
+        {loading ? (
+          <Skeleton variant="rectangular" height="100%" />
+        ) : (
+          <Carousel
+            dynamicHeight={true}
+            infiniteLoop
+            emulateTouch
+            showStatus={false}
+            showIndicators={false}
+            showThumbs={false}
+            showArrows={false}
+          >
+            {images.map((i) => (
+              <img
+                key={i.id}
+                style={{ height: "55vh", width: "auto" }}
+                src={i.original}
+                alt={i.description}
+              />
+            ))}
+          </Carousel>
+        )}
+      </Box>
     </>
   );
 };
 
 interface SearchProps {
+  loading: boolean;
   setQuery: (str: string) => void;
 }
-const SearchComponent: React.FC<SearchProps> = ({ setQuery }) => {
+const SearchComponent: React.FC<SearchProps> = ({ loading, setQuery }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [value, setValue] = useState("");
 
@@ -58,20 +69,40 @@ const SearchComponent: React.FC<SearchProps> = ({ setQuery }) => {
   };
 
   return (
-    <>
+    <Stack
+      direction="row"
+      spacing={1}
+      justifyContent="space-between"
+      alignItems="center"
+    >
       {!showSearch ? (
-        <button onClick={searchHandler}>search</button>
+        <IconButton
+          disabled={loading}
+          aria-label="search"
+          onClick={searchHandler}
+        >
+          <Search />
+        </IconButton>
       ) : (
-        <form onSubmit={submitHandler}>
-          <input
-            type="text"
+        <Box flexGrow={1} component="form" onSubmit={submitHandler}>
+          <TextField
+            size="small"
+            variant="outlined"
+            fullWidth
             placeholder="Search..."
+            type="search"
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
-        </form>
+        </Box>
       )}
-      <button onClick={randomHandler}>random</button>
-    </>
+      <IconButton
+        disabled={loading}
+        aria-label="random"
+        onClick={randomHandler}
+      >
+        <Casino />
+      </IconButton>
+    </Stack>
   );
 };
