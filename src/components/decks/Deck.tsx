@@ -1,35 +1,31 @@
+import { Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { IDeck } from "../../models/deck";
 import { decksAPI } from "../../service/decksApi";
+import { MyPaper } from "../misc/MyPaper";
 
 interface DeckProps {
   deck: IDeck;
-  isFetching: boolean;
 }
 
-export const Deck: React.FC<DeckProps> = ({ deck, isFetching }) => {
+export const Deck: React.FC<DeckProps> = ({ deck }) => {
   const [add, { isLoading }] = decksAPI.useAddPDtoUDMutation();
-  const btnLoading = isLoading || isFetching;
+  const btnLoading = isLoading;
 
   const addHandler = () => {
     add(deck.id);
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid black",
-        marginBottom: "10px",
-        padding: "5px",
-      }}
-    >
-      <p>Id: {deck.id}</p>
-      <p>Name: {deck.name}</p>
-      <p>Total cards count: {deck.totalCardsCount}</p>
-      <p>Author: {deck.createdBy.name}</p>
-      <button disabled={btnLoading} onClick={addHandler}>
-        Add to the user decks
-      </button>
-    </div>
+    <MyPaper>
+      <Stack p={2} spacing={0.5}>
+        <Typography>Name: {deck.name}</Typography>
+        <Typography>Cards count: {deck.totalCardsCount}</Typography>
+        <Typography>Author: {deck.createdBy.name}</Typography>
+        <Button variant="outlined" disabled={btnLoading} onClick={addHandler}>
+          Add
+        </Button>
+      </Stack>
+    </MyPaper>
   );
 };

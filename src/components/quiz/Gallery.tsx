@@ -61,11 +61,19 @@ const SearchComponent: React.FC<SearchProps> = ({ loading, setQuery }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [value, setValue] = useState("");
 
-  const randomHandler = () => setQuery("");
-  const searchHandler = () => setShowSearch(true);
+  const randomHandler = () => {
+    setShowSearch(false);
+    setValue("");
+    setQuery("");
+  };
+  const searchHandler = () => {
+    setValue("");
+    setShowSearch(true);
+  };
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setQuery(value);
+    setShowSearch(false);
   };
 
   return (

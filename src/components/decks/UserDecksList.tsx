@@ -1,22 +1,30 @@
+import { Grid, Stack, Typography } from "@mui/material";
 import React from "react";
+import { usePagination } from "../../hooks/usePagination";
 import { decksAPI } from "../../service/decksApi";
 import { Loader } from "../misc/Loader";
+import { MyPagination } from "../misc/MyPagination";
 import { UserDeck } from "./UserDeck";
 
 export const UserDecksList: React.FC = () => {
-  const { data: userDecks, isLoading } = decksAPI.useGetUserDecksQuery();
+  const { data: userDecks = [], isLoading } = decksAPI.useGetUserDecksQuery();
+  const { jump, currentData, currentPage, maxPage } = usePagination(userDecks);
 
   if (isLoading) return <Loader />;
-  if (!userDecks) return null;
-  if (userDecks.length === 0) return <div>no user decks</div>;
+  if (!userDecks?.length) return null;
   return (
-    <div>
-      <div>User decks:</div>
-      <div>
-        {userDecks.map((userDeck) => (
+    <Grid item flexGrow={1}>
+      <Typography gutterBottom>User decks:</Typography>
+      <Stack spacing={2}>
+        {currentData().map((userDeck) => (
           <UserDeck userDeck={userDeck} key={userDeck.id} />
         ))}
-      </div>
-    </div>
+      </Stack>
+      <MyPagination
+        currentPage={currentPage}
+        maxPage={maxPage}
+        onPageChange={jump}
+      />
+    </Grid>
   );
 };

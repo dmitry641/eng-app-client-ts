@@ -60,15 +60,17 @@ export const decksAPI = createApi({
         );
       },
     }),
-    delete: build.mutation<IUserDeck, string>({
-      query: (userDeckId) => ({
-        url: `/decks/delete/${userDeckId}`,
+    delete: build.mutation<IUserDeck, IUserDeck>({
+      query: (userDeck) => ({
+        url: `/decks/delete/${userDeck.id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Deck"],
-      onQueryStarted: async (userDeckId, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (userDeck, { dispatch, queryFulfilled }) => {
         await queryFulfilled;
-        dispatch(filterUserDecksAction(userDeckId));
+        if (userDeck.published) {
+          dispatch(appendPublicDeckAction(userDeck.deck));
+        }
+        dispatch(filterUserDecksAction(userDeck.id));
       },
     }),
     publish: build.mutation<IUserDeck, string>({
@@ -93,9 +95,9 @@ export const decksAPI = createApi({
         method: "POST",
         body: { deckId },
       }),
-      invalidatesTags: ["Deck"],
       onQueryStarted: async (deckId, { dispatch, queryFulfilled }) => {
         const { data: userDeck } = await queryFulfilled;
+        dispatch(filterPublicDecksAction(deckId));
         dispatch(appendUserDeckAction(userDeck));
         dispatch(refetchCardsAction);
       },
@@ -184,7 +186,13 @@ export const updateUserDeckAction = (userDeck: IUserDeck) =>
 
 const filterUserDecksAction = (userDeckId: string) =>
   decksAPI.util.updateQueryData("getUserDecks", undefined, (draftUserDecks) => {
-    const filtered = draftUserDecks.filter((d) => d.id !== userDeckId);
+    const filtered = draftUserDecks.filter((ud) => ud.id !== userDeckId);
+    return filtered;
+  });
+
+const filterPublicDecksAction = (deckId: string) =>
+  decksAPI.util.updateQueryData("getDecks", undefined, (draftDecks) => {
+    const filtered = draftDecks.filter((d) => d.id !== deckId);
     return filtered;
   });
 
@@ -192,7 +200,13 @@ const setDecksSettingsAction = (settings: IDecksSettings) =>
   decksAPI.util.updateQueryData("getSettings", undefined, () => settings);
 
 const appendUserDeckAction = (userDeck: IUserDeck) =>
-  decksAPI.util.updateQueryData("getUserDecks", undefined, (draftDecks) => {
-    draftDecks.push(userDeck);
+  decksAPI.util.updateQueryData("getUserDecks", undefined, (draftUserDecks) => {
+    draftUserDecks.push(userDeck);
+    return draftUserDecks;
+  });
+
+const appendPublicDeckAction = (deck: IDeck) =>
+  decksAPI.util.updateQueryData("getDecks", undefined, (draftDecks) => {
+    draftDecks.push(deck);
     return draftDecks;
   });

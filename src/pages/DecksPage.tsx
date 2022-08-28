@@ -1,3 +1,4 @@
+import { Grid } from "@mui/material";
 import React from "react";
 import { DecksList } from "../components/decks/DecksList";
 import { UserDeckCreate } from "../components/decks/UserDeckCreate";
@@ -17,8 +18,10 @@ export const DecksPage: React.FC = () => {
       />
       <MainContainer>
         <UserDeckCreate />
-        <UserDecksList />
-        <DecksList />
+        <Grid container spacing={2} mt={0}>
+          <UserDecksList />
+          <DecksList />
+        </Grid>
       </MainContainer>
     </>
   );

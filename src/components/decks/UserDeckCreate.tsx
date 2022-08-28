@@ -1,3 +1,4 @@
+import { Box, Button, Stack, Typography } from "@mui/material";
 import React, { useRef } from "react";
 import { decksAPI } from "../../service/decksApi";
 
@@ -19,15 +20,15 @@ export const UserDeckCreate: React.FC = () => {
   };
 
   return (
-    <div>
-      <div>Filetype: csv</div>
-      <div>
-        Format: frontPrimary, frontSecondary?, backPrimary, backSecondary?
-      </div>
-      <div>
-        <button disabled={btnLoading} onClick={clickHandler}>
+    <Stack direction="row" spacing={2} alignItems="center">
+      <Box>
+        <Button
+          variant="contained"
+          disabled={btnLoading}
+          onClick={clickHandler}
+        >
           Create deck
-        </button>
+        </Button>
         <input
           onChange={createHandler}
           multiple={false}
@@ -35,7 +36,16 @@ export const UserDeckCreate: React.FC = () => {
           type="file"
           hidden
         />
-      </div>
-    </div>
+      </Box>
+
+      <Box>
+        <Typography variant="body2" color="text.secondary">
+          Filetype: csv
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Format: frontPrimary, frontSecondary?, backPrimary, backSecondary?
+        </Typography>
+      </Box>
+    </Stack>
   );
 };

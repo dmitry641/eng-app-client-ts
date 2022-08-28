@@ -1,4 +1,19 @@
-import React, { ChangeEvent, useState } from "react";
+import {
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Stack } from "@mui/system";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { IDecksSettings, SyncData, SyncTypeEnum } from "../../models/deck";
 import { decksAPI } from "../../service/decksApi";
 import { Loader } from "../misc/Loader";
@@ -36,10 +51,12 @@ const FirstState: React.FC<SettingsProps> = ({ settings }) => {
   if (second) return <SecondState backToPrevState={stateToFalse} />;
   return (
     <>
-      <p>Not synced with the dynamic deck yet.</p>
-      <button disabled={btnLoading} onClick={createHandler}>
+      <Typography variant="h6" gutterBottom>
+        Not synced with the dynamic deck yet.
+      </Typography>
+      <Button variant="outlined" disabled={btnLoading} onClick={createHandler}>
         {settings.dynamicCreated ? "Choose sync type" : "Create dynamic deck"}
-      </button>
+      </Button>
     </>
   );
 };
@@ -53,15 +70,15 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
   const [link, setLink] = useState<string>();
   const btnLoading = isLoading;
 
-  const radioHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const radioHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setType(e.target.value as SyncTypeEnum);
   };
 
-  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setLink(e.target.value);
   };
 
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       await update({ type, link } as SyncData).unwrap();
@@ -72,46 +89,45 @@ const SecondState: React.FC<SecondStateProps> = ({ backToPrevState }) => {
   return (
     <>
       <form onSubmit={submitHandler}>
-        <div>Sync with...</div>
-        <div>
-          <input
-            disabled={btnLoading}
-            type="radio"
-            id="yandex"
-            name="type"
-            value={SyncTypeEnum.yandex}
-            onChange={radioHandler}
-          />
-          <label htmlFor="yandex">Yandex</label>
-        </div>
-        <div>
-          <input
-            disabled={btnLoading}
-            type="radio"
-            id="reverso"
-            name="type"
-            value={SyncTypeEnum.reverso}
-            onChange={radioHandler}
-          />
-          <label htmlFor="reverso">Reverso</label>
-        </div>
+        <Stack spacing={2}>
+          <FormControl disabled={btnLoading} onChange={radioHandler}>
+            <FormLabel>Sync with...</FormLabel>
+            <RadioGroup>
+              <FormControlLabel
+                value={SyncTypeEnum.yandex}
+                control={<Radio />}
+                label={SyncTypeEnum.yandex}
+              />
+              <FormControlLabel
+                value={SyncTypeEnum.reverso}
+                control={<Radio />}
+                label={SyncTypeEnum.reverso}
+              />
+            </RadioGroup>
+          </FormControl>
 
-        <LinkComponent
-          type={type}
-          onChange={changeHandler}
-          btnLoading={btnLoading}
-        />
+          <LinkComponent
+            type={type}
+            onChange={changeHandler}
+            btnLoading={btnLoading}
+          />
 
-        <div>
-          {type && link && (
-            <button disabled={btnLoading} type="submit">
-              Save
-            </button>
-          )}
-          <button disabled={btnLoading} onClick={backToPrevState}>
-            Back
-          </button>
-        </div>
+          <Stack direction="row" spacing={2}>
+            {type && link && (
+              <Button variant="contained" disabled={btnLoading} type="submit">
+                Save
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              color="error"
+              disabled={btnLoading}
+              onClick={backToPrevState}
+            >
+              Back
+            </Button>
+          </Stack>
+        </Stack>
       </form>
     </>
   );
@@ -136,37 +152,41 @@ const ThirdState: React.FC<SettingsProps> = ({ settings }) => {
 
   if (second) return <SecondState backToPrevState={stateToFalse} />;
   return (
-    <>
-      <p>Synced with the dynamic deck.</p>
-      <p>Sync type: {settings.dynamicSyncType}</p>
-      <p>Sync link: {settings.dynamicSyncLink}</p>
+    <Stack spacing={1}>
+      <Typography variant="h6">Synced with the dynamic deck.</Typography>
+      <Divider />
+      <Typography>Sync type: {settings.dynamicSyncType}</Typography>
+      <Typography>Sync link: {settings.dynamicSyncLink}</Typography>
       <div>
-        <button disabled={btnLoading} onClick={stateToTrue}>
+        <Button variant="outlined" disabled={btnLoading} onClick={stateToTrue}>
           Change
-        </button>
+        </Button>
       </div>
-      <br />
-      <div>
-        <input
+
+      <FormGroup>
+        <FormControlLabel
           disabled={btnLoading}
-          type="checkbox"
-          name="autoSync"
-          id="autoSync"
-          checked={settings.dynamicAutoSync}
-          onChange={autoSyncHandler}
+          control={
+            <Switch
+              checked={settings.dynamicAutoSync}
+              onChange={autoSyncHandler}
+            />
+          }
+          label="Auto sync"
         />
-        <label htmlFor="autoSync">Auto sync</label>
-      </div>
-      <br />
-      <div>
-        <button onClick={syncNow} disabled={btnLoading}>
+      </FormGroup>
+
+      <Stack direction="row" spacing={2} alignItems="center">
+        <Button variant="contained" onClick={syncNow} disabled={btnLoading}>
           Sync
-        </button>
+        </Button>
         {settings.dynamicSyncMessage && (
-          <span>{settings.dynamicSyncMessage}</span>
+          <Typography color="error.main">
+            {settings.dynamicSyncMessage}
+          </Typography>
         )}
-      </div>
-    </>
+      </Stack>
+    </Stack>
   );
 };
 
@@ -184,17 +204,14 @@ const LinkComponent: React.FC<LinkProps> = ({ type, onChange, btnLoading }) => {
       : "https://context.reverso.net/favourites/accountname";
 
   return (
-    <>
-      <div>
-        <div>Link: </div>
-        <input
-          disabled={btnLoading}
-          type="text"
-          name="link"
-          onChange={onChange}
-        />
-      </div>
-      <div>Example: {hint}</div>
-    </>
+    <Stack spacing={1}>
+      <Typography>Link:</Typography>
+      <Box>
+        <TextField size="small" disabled={btnLoading} onChange={onChange} />
+      </Box>
+      <Typography variant="body2" color="text.secondary">
+        Example: {hint}
+      </Typography>
+    </Stack>
   );
 };
