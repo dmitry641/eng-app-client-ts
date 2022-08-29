@@ -1,3 +1,4 @@
+import { Stack } from "@mui/material";
 import React from "react";
 import { FavoritesList } from "../components/flashcards/FavoritesList";
 import { FlashcardsSettings } from "../components/flashcards/FlashcardsSettings";
@@ -14,8 +15,10 @@ export const FlashcardsSettingsPage: React.FC = () => {
         title={HeaderTitleEnum.flashcardsSettings}
       />
       <MainContainer>
-        <FlashcardsSettings />
-        <FavoritesList />
+        <Stack spacing={2}>
+          <FlashcardsSettings />
+          <FavoritesList />
+        </Stack>
       </MainContainer>
     </>
   );

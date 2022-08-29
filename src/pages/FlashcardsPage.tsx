@@ -1,7 +1,7 @@
+import { Box } from "@mui/material";
 import React from "react";
 import { FlashcardsComponent } from "../components/flashcards/FlashcardsComponent";
 import { Header } from "../components/misc/Header";
-import { MainContainer } from "../components/misc/MainContainer";
 import { RoutesEnum } from "../routes";
 import { HeaderTitleEnum } from "../utils";
 
@@ -13,9 +13,16 @@ export const FlashcardsPage: React.FC = () => {
         title={HeaderTitleEnum.flashcards}
         nextRoute={RoutesEnum.FLASHCARDS_SETTINGS}
       />
-      <MainContainer>
+      <Box
+        width="90wh"
+        height="90vh"
+        display="flex"
+        justifyContent="center"
+        sx={{ alignItems: { xs: "center", sm: "flex-start" } }}
+        p={3}
+      >
         <FlashcardsComponent />
-      </MainContainer>
+      </Box>
     </>
   );
 };

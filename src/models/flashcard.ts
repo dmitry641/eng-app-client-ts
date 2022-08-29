@@ -55,10 +55,10 @@ export type UpdateType = {
 
 const labels = [
   "High priority for the dynamic deck",
-  "showLearned",
-  "shuffleDecks",
-  "frontSideFirst",
-  "randomSideFirst",
+  "Show learned cards",
+  "Shuffle decks",
+  "Show front side first",
+  "Show random side first",
 ];
 export const settingsArray = Object.values(UpdateTypeEnum).map((el, i) => {
   return { type: el, label: labels[i] };

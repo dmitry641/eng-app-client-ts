@@ -1,3 +1,4 @@
+import { FormControlLabel, FormGroup, Switch } from "@mui/material";
 import React, { ChangeEvent } from "react";
 import { settingsArray, UpdateTypeEnum } from "../../models/flashcard";
 import { cardsAPI } from "../../service/cardsApi";
@@ -18,25 +19,24 @@ export const FlashcardsSettings: React.FC = () => {
   if (isLoading) return <Loader />;
   if (!settings) return null;
   return (
-    <>
+    <div>
       {settingsArray.map((el, idx) => {
         return (
-          <div key={idx}>
-            <div>
-              <input
-                disabled={btnLoading}
-                type="checkbox"
-                name={UpdateTypeEnum[el.type]}
-                id={UpdateTypeEnum[el.type]}
-                checked={settings[el.type]}
-                onChange={changeHandler}
-              />
-              <label htmlFor={UpdateTypeEnum[el.type]}>{el.label}</label>
-            </div>
-            <br />
-          </div>
+          <FormGroup key={idx}>
+            <FormControlLabel
+              disabled={btnLoading}
+              control={
+                <Switch
+                  name={UpdateTypeEnum[el.type]}
+                  checked={settings[el.type]}
+                  onChange={changeHandler}
+                />
+              }
+              label={el.label}
+            />
+          </FormGroup>
         );
       })}
-    </>
+    </div>
   );
 };

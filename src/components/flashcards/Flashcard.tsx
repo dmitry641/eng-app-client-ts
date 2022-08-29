@@ -1,3 +1,18 @@
+import {
+  Delete,
+  FlipToBack,
+  FlipToFront,
+  Star,
+  StarBorder,
+} from "@mui/icons-material";
+import {
+  Button,
+  ButtonGroup,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useRef, useState } from "react";
 import { useSide } from "../../hooks/useSide";
 import { IUserCard, StatusEnum } from "../../models/flashcard";
@@ -19,9 +34,12 @@ export const Flashcard: React.FC<FlashcardProps> = ({
   const [del, { isLoading: dL }] = cardsAPI.useDeleteMutation();
   const [lrn, { isLoading: lL }] = cardsAPI.useLearnMutation();
   const btnLoading = isFetching || fL || dL || lL;
-  const currentCardText = frontSide
+  const currentPrimaryText = frontSide
     ? flashcard.card.frontPrimary
     : flashcard.card.backPrimary;
+  const currentSecondaryText = frontSide
+    ? flashcard.card.frontSecondary
+    : flashcard.card.backSecondary;
 
   const flipHandler = switchSide;
   const deleteHandler = () => {
@@ -45,45 +63,70 @@ export const Flashcard: React.FC<FlashcardProps> = ({
       const voice = voicesList.find((v) => v.lang === "en-US");
       if (voice) msg.voice = voice;
       msg.onend = () => setPlaying(false);
-      msg.text = currentCardText;
+      msg.text = currentPrimaryText;
       synthRef.current.speak(msg);
     }
   };
 
   return (
-    <div>
-      <div>
-        <button disabled={btnLoading} onClick={deleteHandler}>
-          delete
-        </button>
-        <button disabled={btnLoading} onClick={flipHandler}>
-          flip
-        </button>
-        <button disabled={btnLoading} onClick={favoriteHandler}>
-          {flashcard.favorite ? "unfavorite" : "favorite"}
-        </button>
-      </div>
-      <div onClick={playStopHandler}>{currentCardText}</div>
-      <div>
-        <button
+    <Paper>
+      <Stack
+        p={3}
+        height="60vh"
+        sx={{ width: { xs: "auto", sm: "500px" } }}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Stack width="100%" direction="row" justifyContent="space-between">
+          <IconButton
+            aria-label="delete"
+            disabled={btnLoading}
+            onClick={deleteHandler}
+            color="primary"
+          >
+            <Delete fontSize="large" />
+          </IconButton>
+          <IconButton aria-label="flip" onClick={flipHandler} color="primary">
+            {frontSide ? (
+              <FlipToFront fontSize="large" />
+            ) : (
+              <FlipToBack fontSize="large" />
+            )}
+          </IconButton>
+          <IconButton
+            aria-label={flashcard.favorite ? "unfavorite" : "favorite"}
+            disabled={btnLoading}
+            onClick={favoriteHandler}
+            color="primary"
+          >
+            {flashcard.favorite ? (
+              <Star fontSize="large" />
+            ) : (
+              <StarBorder fontSize="large" />
+            )}
+          </IconButton>
+        </Stack>
+
+        <Stack flexGrow={1} justifyContent="center">
+          <Typography color="text.secondary">{currentSecondaryText}</Typography>
+          <Typography variant="h6" onClick={playStopHandler}>
+            {currentPrimaryText}
+          </Typography>
+        </Stack>
+
+        <ButtonGroup
+          fullWidth
+          variant="text"
+          size="large"
           disabled={btnLoading}
-          onClick={() => learnHandler(StatusEnum.hard)}
         >
-          hard
-        </button>
-        <button
-          disabled={btnLoading}
-          onClick={() => learnHandler(StatusEnum.medium)}
-        >
-          medium
-        </button>
-        <button
-          disabled={btnLoading}
-          onClick={() => learnHandler(StatusEnum.easy)}
-        >
-          easy
-        </button>
-      </div>
-    </div>
+          <Button onClick={() => learnHandler(StatusEnum.hard)}>hard</Button>
+          <Button onClick={() => learnHandler(StatusEnum.medium)}>
+            medium
+          </Button>
+          <Button onClick={() => learnHandler(StatusEnum.easy)}>easy</Button>
+        </ButtonGroup>
+      </Stack>
+    </Paper>
   );
 };
