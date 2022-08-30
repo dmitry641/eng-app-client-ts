@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import React from "react";
-import { ISession } from "../../models/session";
+import { ISession } from "../../models/user";
 import { Loader } from "../misc/Loader";
 import { Session } from "./Session";
 

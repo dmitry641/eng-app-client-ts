@@ -11,10 +11,10 @@ export const SessionComponent: React.FC = () => {
   return (
     <>
       <Stack direction="row" alignItems="center" spacing={2}>
-        <Typography variant="body1">Sessions:</Typography>
+        <Typography variant="body1">Sessions</Typography>
         {!showList ? (
-          <Button variant="contained" disabled={disabled} onClick={getSessions}>
-            Get sessions
+          <Button variant="outlined" disabled={disabled} onClick={getSessions}>
+            Get
           </Button>
         ) : (
           <Button
@@ -23,12 +23,12 @@ export const SessionComponent: React.FC = () => {
             disabled={disabled}
             onClick={resetSessions}
           >
-            Reset sessions
+            Reset
           </Button>
         )}
       </Stack>
 
-      <SessionsList loading={loading} sessions={sessions}></SessionsList>
+      <SessionsList loading={loading} sessions={sessions} />
     </>
   );
 };

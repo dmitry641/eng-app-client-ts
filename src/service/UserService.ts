@@ -1,6 +1,8 @@
 import axios from "axios";
-import { ISession } from "../models/session";
+
 import {
+  ISession,
+  IStatistic,
   IUserSettings,
   SignInInput,
   SignUpInput,
@@ -45,5 +47,8 @@ export class UserService {
     return axios.post<IUserSettings>(`${API_URL}/users/settings`, obj, {
       withCredentials: true,
     });
+  }
+  static getStatistics() {
+    return $api.get<IStatistic[]>("/users/statistics/");
   }
 }

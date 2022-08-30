@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ISession } from "../models/session";
+import { ISession } from "../models/user";
 import { appResetAll } from "../redux/actions/app-actions";
 import { UserService } from "../service/UserService";
 import { errorHandler, sleep, TIMEOUTS } from "../utils";

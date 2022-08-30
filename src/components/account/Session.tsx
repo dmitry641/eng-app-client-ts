@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import React from "react";
-import { ISession } from "../../models/session";
+import { ISession } from "../../models/user";
 
 interface SessionProps {
   session: ISession;
