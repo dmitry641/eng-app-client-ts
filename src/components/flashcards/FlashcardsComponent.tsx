@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import React from "react";
 import { cardsAPI } from "../../service/cardsApi";
 import { Loader } from "../misc/Loader";
@@ -14,6 +15,8 @@ export const FlashcardsComponent: React.FC = () => {
 
   if (loading) return <Loader />;
   if (!flashcards || !settings) return null;
-  if (flashcards.length === 0) return <div>no flashcards</div>;
+  if (flashcards.length === 0) {
+    return <Typography variant="h5">no flashcards</Typography>;
+  }
   return <Flashcard flashcard={flashcards[0]} isFetching={isFetching} />;
 };

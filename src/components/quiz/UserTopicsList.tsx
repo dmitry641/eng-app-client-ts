@@ -14,35 +14,51 @@ import { Loader } from "../misc/Loader";
 import { UserTopic } from "./UserTopic";
 
 export const UserTopicsList: React.FC = () => {
-  const { data: userTopics = [], isLoading } = quizAPI.useGetUserTopicsQuery();
+  const {
+    data: cUT,
+    isLoading: cUTL,
+    isFetching: cUTF,
+  } = quizAPI.useINITQuery();
+  const {
+    data: userTopics = [],
+    isLoading: utL,
+    isFetching: utF,
+  } = quizAPI.useGetUserTopicsQuery(undefined, { skip: !cUT });
+  const loading = utL || cUTL;
+  const fetching = utF || cUTF;
+
   const started = userTopics.filter((ut) => ut.status === UTStatus.started);
   const paused = userTopics.filter((ut) => ut.status === UTStatus.paused);
   const blocked = userTopics.filter((ut) => ut.status === UTStatus.blocked);
   const finished = userTopics.filter((ut) => ut.status === UTStatus.finished);
 
   const wrapped: UTWrapperProps[] = [
-    { title: "Started", array: started, key: Math.random() },
-    { title: "Paused", array: paused, key: Math.random() },
-    { title: "Blocked", array: blocked, key: Math.random() },
-    { title: "Finished", array: finished, key: Math.random() },
+    { title: "Started", array: started },
+    { title: "Paused", array: paused },
+    { title: "Blocked", array: blocked },
+    { title: "Finished", array: finished },
   ];
 
-  if (isLoading) return <Loader />;
+  if (loading || fetching) return <Loader />;
   if (!userTopics.length) return null;
-  return <div>{wrapped.map(UserTopicWrapper)}</div>;
+  return (
+    <div>
+      {wrapped.map((el) => (
+        <UserTopicWrapper key={el.title} title={el.title} array={el.array} />
+      ))}
+    </div>
+  );
 };
 
 interface UTWrapperProps {
   title: string;
   array: IUserTopic[];
-  key: number;
 }
-
-const UserTopicWrapper: React.FC<UTWrapperProps> = ({ array, title, key }) => {
+const UserTopicWrapper: React.FC<UTWrapperProps> = ({ array, title }) => {
   const [expanded, setExpanded] = useState(() => false);
   if (!array.length) return null;
   return (
-    <Box key={key} mt={2}>
+    <Box mt={2}>
       <Accordion expanded={expanded} onChange={(e, v) => setExpanded(v)}>
         <AccordionSummary expandIcon={<ExpandMore />}>
           <Typography variant="h6">{title}</Typography>

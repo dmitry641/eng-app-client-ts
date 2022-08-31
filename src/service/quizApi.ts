@@ -27,7 +27,7 @@ export const quizAPI = createApi({
         ];
 
         for (const endpoint of refetchEndpoints) {
-          await endpoint.initiate(undefined, {
+          endpoint.initiate(undefined, {
             forceRefetch: true,
           })(dispatch, getState, undefined);
         }

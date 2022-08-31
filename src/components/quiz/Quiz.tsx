@@ -13,7 +13,8 @@ export const Quiz: React.FC = () => {
     data: questions,
     isLoading: qL,
     isFetching: qF,
-  } = quizAPI.useGetQuestionsQuery();
+  } = quizAPI.useGetQuestionsQuery(undefined, { skip: !currentUT });
+
   const loading = ctL || qL;
   const fetching = ctF || qF;
 

@@ -5,9 +5,20 @@ import { Loader } from "../misc/Loader";
 import { Topic } from "./Topic";
 
 export const TopicsList: React.FC = () => {
-  const { data: topics = [], isLoading } = quizAPI.useGetTopicsQuery();
+  const {
+    data: cUT,
+    isLoading: cUTL,
+    isFetching: cUTF,
+  } = quizAPI.useINITQuery();
+  const {
+    data: topics = [],
+    isLoading: tL,
+    isFetching: tF,
+  } = quizAPI.useGetTopicsQuery(undefined, { skip: !cUT });
+  const loading = tL || cUTL;
+  const fetching = tF || cUTF;
 
-  if (isLoading) return <Loader />;
+  if (loading || fetching) return <Loader />;
   if (!topics.length) return null;
   return (
     <>
