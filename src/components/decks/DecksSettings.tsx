@@ -181,7 +181,7 @@ const ThirdState: React.FC<SettingsProps> = ({ settings }) => {
           Sync
         </Button>
         {settings.dynamicSyncMessage && (
-          <Typography color="error.main">
+          <Typography color="text.secondary">
             {settings.dynamicSyncMessage}
           </Typography>
         )}

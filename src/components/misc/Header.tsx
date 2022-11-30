@@ -33,7 +33,12 @@ export const Header: React.FC<HeaderProps> = ({
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar variant="dense">
-          <IconButton color="inherit" aria-label="Back" onClick={backHandler}>
+          <IconButton
+            color="inherit"
+            aria-label="Back"
+            onClick={backHandler}
+            sx={{ mr: 1 }}
+          >
             <ArrowBack />
           </IconButton>
 

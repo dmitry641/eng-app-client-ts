@@ -20,6 +20,7 @@ export const useTheme = () => {
       createTheme({
         palette: {
           mode: isLight ? "light" : "dark",
+          primary: { main: "#3f51b5" },
         },
       }),
     [isLight]

@@ -1,9 +1,9 @@
 import {
   Delete,
-  FlipToBack,
-  FlipToFront,
   Star,
   StarBorder,
+  StopCircle,
+  VolumeUp,
 } from "@mui/icons-material";
 import {
   Button,
@@ -86,11 +86,15 @@ export const Flashcard: React.FC<FlashcardProps> = ({
           >
             <Delete fontSize="large" />
           </IconButton>
-          <IconButton aria-label="flip" onClick={flipHandler} color="primary">
-            {frontSide ? (
-              <FlipToFront fontSize="large" />
+          <IconButton
+            aria-label="flip"
+            onClick={playStopHandler}
+            color="primary"
+          >
+            {playing ? (
+              <StopCircle fontSize="large" />
             ) : (
-              <FlipToBack fontSize="large" />
+              <VolumeUp fontSize="large" />
             )}
           </IconButton>
           <IconButton
@@ -109,7 +113,11 @@ export const Flashcard: React.FC<FlashcardProps> = ({
 
         <Stack flexGrow={1} justifyContent="center">
           <Typography color="text.secondary">{currentSecondaryText}</Typography>
-          <Typography variant="h6" onClick={playStopHandler}>
+          <Typography
+            variant="h6"
+            onClick={flipHandler}
+            sx={{ cursor: "pointer", userSelect: "none" }}
+          >
             {currentPrimaryText}
           </Typography>
         </Stack>
