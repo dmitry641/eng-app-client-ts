@@ -14,6 +14,7 @@ export const Gallery: React.FC<GalleryProps> = ({ topicName }) => {
     data: images,
     isLoading,
     isFetching,
+    refetch: refetchImages,
   } = quizAPI.useGetImagesQuery(query);
   const loading = isLoading || isFetching || !images?.length;
 
@@ -21,9 +22,14 @@ export const Gallery: React.FC<GalleryProps> = ({ topicName }) => {
     setQuery(topicName);
   }, [topicName]);
 
+  const refetch = (newQuery: string) => {
+    if (newQuery === query) refetchImages();
+    setQuery(newQuery);
+  };
+
   return (
     <>
-      <SearchComponent loading={loading} setQuery={setQuery} />
+      <SearchComponent loading={loading} refetch={refetch} />
 
       <Box height="55vh">
         {loading ? (
@@ -36,7 +42,6 @@ export const Gallery: React.FC<GalleryProps> = ({ topicName }) => {
             showStatus={false}
             showIndicators={false}
             showThumbs={false}
-            showArrows={false}
           >
             {images.map((i) => (
               <img
@@ -55,16 +60,16 @@ export const Gallery: React.FC<GalleryProps> = ({ topicName }) => {
 
 interface SearchProps {
   loading: boolean;
-  setQuery: (str: string) => void;
+  refetch: (str: string) => void;
 }
-const SearchComponent: React.FC<SearchProps> = ({ loading, setQuery }) => {
+const SearchComponent: React.FC<SearchProps> = ({ loading, refetch }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [value, setValue] = useState("");
 
   const randomHandler = () => {
     setShowSearch(false);
     setValue("");
-    setQuery("");
+    refetch("");
   };
   const searchHandler = () => {
     setValue("");
@@ -72,7 +77,7 @@ const SearchComponent: React.FC<SearchProps> = ({ loading, setQuery }) => {
   };
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setQuery(value);
+    refetch(value);
     setShowSearch(false);
   };
 
