@@ -13,7 +13,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSide } from "../../hooks/useSide";
 import { IUserCard, StatusEnum } from "../../models/flashcard";
 import { cardsAPI } from "../../service/cardsApi";
@@ -27,13 +27,14 @@ export const Flashcard: React.FC<FlashcardProps> = ({
   flashcard,
   isFetching,
 }) => {
+  const [blur, setBlur] = useState(false);
   const [frontSide, switchSide] = useSide();
   const [playing, setPlaying] = useState(false);
   const synthRef = useRef(window.speechSynthesis);
   const [fav, { isLoading: fL }] = cardsAPI.useFavoriteMutation();
   const [del, { isLoading: dL }] = cardsAPI.useDeleteMutation();
   const [lrn, { isLoading: lL }] = cardsAPI.useLearnMutation();
-  const btnLoading = isFetching || fL || dL || lL;
+  const btnLoading = isFetching || fL || dL || lL || blur;
   const currentPrimaryText = frontSide
     ? flashcard.card.frontPrimary
     : flashcard.card.backPrimary;
@@ -68,6 +69,16 @@ export const Flashcard: React.FC<FlashcardProps> = ({
     }
   };
 
+  const handleFocus = () => setBlur(false);
+  const handleBlur = () => setBlur(true);
+  useEffect(() => {
+    window.addEventListener("blur", handleBlur, false);
+    window.addEventListener("focus", handleFocus, false);
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, []);
   return (
     <Paper>
       <Stack
@@ -87,7 +98,7 @@ export const Flashcard: React.FC<FlashcardProps> = ({
             <Delete fontSize="large" />
           </IconButton>
           <IconButton
-            aria-label="flip"
+            aria-label="play_stop"
             onClick={playStopHandler}
             color="primary"
           >
