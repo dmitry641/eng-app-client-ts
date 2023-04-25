@@ -1,40 +1,41 @@
 import {
   Delete,
+  FlipToBack,
+  FlipToFront,
   Star,
   StarBorder,
-  StopCircle,
-  VolumeUp,
 } from "@mui/icons-material";
 import {
+  Badge,
+  Box,
   Button,
-  ButtonGroup,
   IconButton,
   Paper,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
+import React, { useRef, useState } from "react";
 import { useSide } from "../../hooks/useSide";
 import { IUserCard, StatusEnum } from "../../models/flashcard";
 import { cardsAPI } from "../../service/cardsApi";
+TimeAgo.addDefaultLocale(en);
+const timeAgo = new TimeAgo("en-US");
 
 interface FlashcardProps {
   flashcard: IUserCard;
-  isFetching: boolean;
 }
 
-export const Flashcard: React.FC<FlashcardProps> = ({
-  flashcard,
-  isFetching,
-}) => {
-  const [blur, setBlur] = useState(false);
+export const Flashcard: React.FC<FlashcardProps> = ({ flashcard }) => {
   const [frontSide, switchSide] = useSide();
   const [playing, setPlaying] = useState(false);
   const synthRef = useRef(window.speechSynthesis);
   const [fav, { isLoading: fL }] = cardsAPI.useFavoriteMutation();
   const [del, { isLoading: dL }] = cardsAPI.useDeleteMutation();
   const [lrn, { isLoading: lL }] = cardsAPI.useLearnMutation();
-  const btnLoading = isFetching || fL || dL || lL || blur;
+  const btnLoading = fL || dL || lL;
   const currentPrimaryText = frontSide
     ? flashcard.card.frontPrimary
     : flashcard.card.backPrimary;
@@ -69,16 +70,6 @@ export const Flashcard: React.FC<FlashcardProps> = ({
     }
   };
 
-  const handleFocus = () => setBlur(false);
-  const handleBlur = () => setBlur(true);
-  useEffect(() => {
-    window.addEventListener("blur", handleBlur, false);
-    window.addEventListener("focus", handleFocus, false);
-    return () => {
-      window.removeEventListener("blur", handleBlur);
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, []);
   return (
     <Paper>
       <Stack
@@ -97,15 +88,11 @@ export const Flashcard: React.FC<FlashcardProps> = ({
           >
             <Delete fontSize="large" />
           </IconButton>
-          <IconButton
-            aria-label="play_stop"
-            onClick={playStopHandler}
-            color="primary"
-          >
-            {playing ? (
-              <StopCircle fontSize="large" />
+          <IconButton aria-label="flip" onClick={flipHandler} color="primary">
+            {frontSide ? (
+              <FlipToFront fontSize="large" />
             ) : (
-              <VolumeUp fontSize="large" />
+              <FlipToBack fontSize="large" />
             )}
           </IconButton>
           <IconButton
@@ -126,25 +113,48 @@ export const Flashcard: React.FC<FlashcardProps> = ({
           <Typography color="text.secondary">{currentSecondaryText}</Typography>
           <Typography
             variant="h6"
-            onClick={flipHandler}
-            sx={{ cursor: "pointer", userSelect: "none" }}
+            onClick={playStopHandler}
+            sx={{ cursor: "pointer" }}
           >
             {currentPrimaryText}
           </Typography>
         </Stack>
 
-        <ButtonGroup
-          fullWidth
-          variant="text"
-          size="large"
-          disabled={btnLoading}
+        <Stack
+          width="100%"
+          direction="row"
+          spacing={2}
+          justifyContent="space-evenly"
+          alignItems="center"
         >
-          <Button onClick={() => learnHandler(StatusEnum.hard)}>hard</Button>
-          <Button onClick={() => learnHandler(StatusEnum.medium)}>
-            medium
-          </Button>
-          <Button onClick={() => learnHandler(StatusEnum.easy)}>easy</Button>
-        </ButtonGroup>
+          {Object.values(StatusEnum).map((status, idx) => {
+            let lastDate = 0;
+            let count = 0;
+            flashcard.history.forEach((obj) => {
+              if (obj.status === status) {
+                count++;
+                lastDate = Math.max(lastDate, obj.date);
+              }
+            });
+
+            return (
+              <Box key={idx}>
+                <Tooltip title={count ? timeAgo.format(lastDate) : ""}>
+                  <Badge badgeContent={count} color="primary">
+                    <Button
+                      variant="text"
+                      size="large"
+                      disabled={btnLoading}
+                      onClick={() => learnHandler(status)}
+                    >
+                      {status}
+                    </Button>
+                  </Badge>
+                </Tooltip>
+              </Box>
+            );
+          })}
+        </Stack>
       </Stack>
     </Paper>
   );

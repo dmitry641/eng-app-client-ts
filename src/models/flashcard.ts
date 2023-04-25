@@ -6,6 +6,7 @@ export interface IUserCard {
   userDeckId: string;
   favorite: boolean;
   deleted: boolean;
+  history: { status: StatusEnum; date: number }[];
 }
 
 interface ICard {
@@ -23,9 +24,9 @@ export type LearnType = {
   status: StatusEnum;
 };
 export enum StatusEnum {
-  easy = "easy",
-  medium = "medium",
   hard = "hard",
+  medium = "medium",
+  easy = "easy",
 }
 
 export type LrnDelType = {
