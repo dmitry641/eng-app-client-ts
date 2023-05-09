@@ -11,11 +11,7 @@ import { HeaderTitleEnum } from "../utils";
 export const DecksPage: React.FC = () => {
   return (
     <>
-      <Header
-        backRoute={RoutesEnum.HOME}
-        title={HeaderTitleEnum.decks}
-        nextRoute={RoutesEnum.DECKS_SETTINGS}
-      />
+      <Header backRoute={RoutesEnum.HOME} title={HeaderTitleEnum.decks} />
       <MainContainer>
         <UserDeckCreate />
         <Grid container spacing={2} mt={0}>

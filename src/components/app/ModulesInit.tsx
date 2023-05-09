@@ -13,7 +13,6 @@ export const ModulesInit: React.FC = () => {
 const useDecksInit = () => {
   decksAPI.useGetUserDecksQuery();
   decksAPI.useGetDecksQuery();
-  decksAPI.useGetSettingsQuery();
   return null;
 };
 

@@ -1,6 +1,5 @@
 import { AccountPage } from "../pages/AccountPage";
 import { DecksPage } from "../pages/DecksPage";
-import { DecksSettingsPage } from "../pages/DecksSettingsPage";
 import { FlashcardsPage } from "../pages/FlashcardsPage";
 import { FlashcardsSettingsPage } from "../pages/FlashcardsSettingsPage";
 import { HomePage } from "../pages/HomePage";
@@ -19,7 +18,6 @@ export enum RoutesEnum {
   FLASHCARDS_SETTINGS = "/flashcards/settings",
 
   DECKS = "/decks",
-  DECKS_SETTINGS = "/decks/settings",
 
   QUIZ = "/quiz",
   QUIZ_SETTINGS = "/quiz/settings",
@@ -61,10 +59,6 @@ export const privateRoutes: IRoute[] = [
   {
     path: RoutesEnum.DECKS,
     Component: DecksPage,
-  },
-  {
-    path: RoutesEnum.DECKS_SETTINGS,
-    Component: DecksSettingsPage,
   },
   {
     path: RoutesEnum.QUIZ,

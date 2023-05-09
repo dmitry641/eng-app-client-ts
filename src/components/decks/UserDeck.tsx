@@ -21,8 +21,7 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
   const [move, { isLoading: mvL }] = decksAPI.useMoveMutation();
   const [deleteUD, { isLoading: dlL }] = decksAPI.useDeleteMutation();
   const [publish, { isLoading: tgL }] = decksAPI.usePublishMutation();
-  const [deleteDD, { isLoading: ddL }] = decksAPI.useDeleteDynamicMutation();
-  const btnLoading = enL || mvL || dlL || tgL || ddL;
+  const btnLoading = enL || mvL || dlL || tgL;
 
   const enableHandler = () => {
     enable(userDeck.id);
@@ -31,11 +30,7 @@ export const UserDeck: React.FC<UserDeckProps> = ({ userDeck }) => {
     move({ userDeckId: userDeck.id, position });
   };
   const deleteHandler = () => {
-    if (userDeck.dynamic) {
-      deleteDD(userDeck.id);
-    } else {
-      deleteUD(userDeck);
-    }
+    deleteUD(userDeck);
   };
   const publishHandler = () => {
     publish(userDeck.id);

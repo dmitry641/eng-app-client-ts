@@ -7,7 +7,6 @@ export enum HeaderTitleEnum {
   flashcards = "Flashcards",
   flashcardsSettings = "Flashcards settings",
   decks = "Decks",
-  decksSettings = "Decks settings",
   quiz = "Quiz",
   quizSettings = "Quiz settings",
 }
