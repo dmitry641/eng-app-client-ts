@@ -6,13 +6,14 @@ export interface IUserCard {
   userDeckId: string;
   favorite: boolean;
   deleted: boolean;
-  history: { status: StatusEnum; date: number }[];
+  streak: number;
+  stepBack: string;
+  stepForward: string;
 }
 
 interface ICard {
   id: string;
   deckId: string;
-  customId?: string;
   frontPrimary: string;
   frontSecondary: string;
   backPrimary: string;
@@ -21,46 +22,46 @@ interface ICard {
 
 export type LearnType = {
   userCardId: string;
-  status: StatusEnum;
+  status: boolean;
 };
-export enum StatusEnum {
-  hard = "hard",
-  medium = "medium",
-  easy = "easy",
-}
 
 export type LrnDelType = {
   userCard: IUserCard;
   userDeck?: IUserDeck;
 };
 
-export interface ICardsSettings {
-  dynamicHighPriority: boolean;
-  showLearned: boolean;
-  shuffleDecks: boolean;
-  frontSideFirst: boolean;
-  randomSideFirst: boolean;
-}
+export const cardsSettings = {
+  showLearned: { value: () => true, label: "Show learned cards" },
+  shuffleDecks: { value: () => true, label: "Shuffle decks" },
+} as const;
 
-export enum UpdateTypeEnum {
-  dynamicHighPriority = "dynamicHighPriority",
-  showLearned = "showLearned",
-  shuffleDecks = "shuffleDecks",
-  frontSideFirst = "frontSideFirst",
-  randomSideFirst = "randomSideFirst",
-}
-export type UpdateType = {
-  type: UpdateTypeEnum;
+type CardsSettings = {
+  [P in keyof typeof cardsSettings]: ReturnType<
+    (typeof cardsSettings)[P]["value"]
+  >;
+};
+
+// const cardsSettingsTypes = ["showLearned", "shuffleDecks"] as const;
+// const cardsSettingsLabels = ["Show learned cards", "Shuffle decks"];
+// export const cardsSettingsDict = cardsSettingsTypes.map((el, idx) => ({
+//   type: el,
+//   label: cardsSettingsLabels[idx],
+// }));
+
+export type CardsSettingsType = keyof typeof cardsSettings;
+export type CardsSettingsDTO = {
+  type: CardsSettingsType;
   value: boolean;
 };
 
-const labels = [
-  "High priority for the dynamic deck",
-  "Show learned cards",
-  "Shuffle decks",
-  "Show front side first",
-  "Show random side first",
-];
-export const settingsArray = Object.values(UpdateTypeEnum).map((el, i) => {
-  return { type: el, label: labels[i] };
-});
+export interface ICardsSettings extends CardsSettings {}
+
+// const testArray = [
+//   { key: "showLearned", value: () => true, label: "Show learned cards" },
+//   { key: "shuffleDecks", value: () => "string", label: "Shuffle decks" },
+// ] as const;
+// // type qwe = {
+// //   [P in (typeof testArray)[number]["key"]]: ReturnType<
+// //     (typeof testArray)[number]["value"]
+// //   >;
+// // };

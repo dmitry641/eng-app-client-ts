@@ -1,10 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/dist/query/react";
 import {
+  CardsSettingsDTO,
   ICardsSettings,
   IUserCard,
   LearnType,
   LrnDelType,
-  UpdateType,
 } from "../models/flashcard";
 import { baseApi } from "./baseApi";
 import { updateUserDeckAction } from "./decksApi";
@@ -115,7 +115,7 @@ export const cardsAPI = createApi({
         );
       },
     }),
-    update: build.mutation<ICardsSettings, UpdateType>({
+    update: build.mutation<ICardsSettings, CardsSettingsDTO>({
       query: (update) => ({
         url: "/flashcards/settings",
         method: "POST",
@@ -123,6 +123,10 @@ export const cardsAPI = createApi({
       }),
       onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
         const { data: settings } = await queryFulfilled;
+
+        if (arg.type === "showLearned") {
+          dispatch(cardsAPI.util.invalidateTags(["Cards"]));
+        }
 
         dispatch(
           cardsAPI.util.updateQueryData(

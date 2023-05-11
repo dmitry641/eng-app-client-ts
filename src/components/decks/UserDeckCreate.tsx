@@ -43,7 +43,7 @@ export const UserDeckCreate: React.FC = () => {
           Filetype: csv
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Format: frontPrimary, frontSecondary?, backPrimary, backSecondary?
+          Format: frontPrimary, frontSecondary?, backPrimary, backSecondary
         </Typography>
       </Box>
     </Stack>
