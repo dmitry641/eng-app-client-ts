@@ -115,13 +115,18 @@ export const Flashcard: React.FC<FlashcardProps> = ({ flashcard }) => {
           </Typography>
         </Stack>
 
-        {frontSide && (
-          <Typography mb={2} variant="body2" color="text.secondary">
-            Do you remember the context? Can you give some examples?
-          </Typography>
-        )}
+        <Typography mb={2} variant="body2" color="text.secondary">
+          {frontSide
+            ? "Do you remember the context? Could you give some examples?"
+            : "Have you learned it?"}
+        </Typography>
 
-        <ButtonGroup fullWidth size="large" sx={{ fontSize: "3rem" }}>
+        <ButtonGroup
+          disabled={btnLoading}
+          fullWidth
+          size="large"
+          sx={{ fontSize: "3rem" }}
+        >
           <Tooltip title={flashcard.stepBack}>
             <Button
               aria-label="no"
